@@ -10,7 +10,7 @@ is based on the python-tail module from
 # Author - Kasun Herath <kasunh01 at gmail.com>
 # Source - https://github.com/kasun/python-tail
 
-but simplified for pratical use
+but improved as described on CHANGELOG and README files
 '''
 
 # Installation

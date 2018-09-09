@@ -1,6 +1,9 @@
 
 # Created by https://www.gitignore.io/api/osx,pydev,linux,macos,django,windows,pycharm,pycharm+iml,pycharm+all,sublimetext,visualstudio,visualstudiocode,openframeworks+visualstudio
 
+### Custom ###
+log/
+
 ### Django ###
 *.log
 *.pot
