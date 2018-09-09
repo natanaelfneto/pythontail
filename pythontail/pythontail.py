@@ -38,12 +38,13 @@ __version__ = "0.2"
 # main class
 class PythonTail(object):
     # represents a tail command
-    def __init__(self):
+    def __init__(self, logger):
         ''' 
             Initiate a PythonTail instance.
             
             Arguments:
          '''
+        self.logger = logger
 
     # function to mmap file and get last line without buffering all data into memory
     def getlastline(self, file):
@@ -61,7 +62,7 @@ class PythonTail(object):
     def follow(self, paths):
     # check if validate paths remained
         if not len(paths) > 0:
-            logger.error('No paths were successfully parsed. Exiting...')
+            self.logger.error('No paths were successfully parsed. Exiting...')
             sys.exit()
         last_line = ''
         while True:
@@ -73,28 +74,29 @@ class PythonTail(object):
 # paths argument parser
 class PathsValidity(object):
     # path validity init
-    def __init__(self):
+    def __init__(self, logger):
         ''' 
             Initiate a PythonTail Path Validity instance.
         '''
+        self.logger = logger
 
     # path validity checker function
     def checker(self, paths):
         # set basic variables
         valid_paths = []    # array for AEs
-        logger.debug('checking validity of parsed files')
+        self.logger.debug('checking validity of parsed files')
         for path in paths:
             if os.access(path, os.F_OK) and os.access(path, os.R_OK) and os.path.isfile(path) :
-                logger.debug("Path %s is successfully parsed", path)
+                self.logger.debug("Path %s is successfully parsed", path)
                 valid_paths.append(path)
             else:
-                logger.debug( \
+                self.logger.debug( \
                     "Path '%s' could not be found or does not have read permitions or it is not a file, \
                     therefore will be ignored", path
                     )
         return valid_paths
 
-def main(follow):
+def main(args):
     # argparser init
     parser = argparse.ArgumentParser(
         description='Unix tail implementation in python'
@@ -124,7 +126,7 @@ def main(follow):
         required=False
     )
     # passing filtered arguments as array
-    args = parser.parse_args() 
+    args = parser.parse_args(args) 
 
     # output software version info
     if args.version:
@@ -161,11 +163,11 @@ def main(follow):
     # tail follow paths
     if args.follow:
         # check validity of the paths parsed
-        paths = PathsValidity()
+        paths = PathsValidity(logger)
         paths = paths.checker(args.follow)
 
         # tail follow paths parsed
-        pythontail = PythonTail()
+        pythontail = PythonTail(logger)
         pythontail.follow(paths)
 
 if __name__ == "__main__":
