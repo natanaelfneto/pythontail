@@ -3,6 +3,8 @@
 
 ### Custom ###
 log/
+dist/
+pythontail.egg-info/
 
 ### Django ###
 *.log

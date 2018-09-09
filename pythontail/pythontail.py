@@ -94,7 +94,7 @@ class PathsValidity(object):
                     )
         return valid_paths
 
-if __name__ == "__main__":
+def main(follow):
     # argparser init
     parser = argparse.ArgumentParser(
         description='Unix tail implementation in python'
@@ -167,4 +167,7 @@ if __name__ == "__main__":
         # tail follow paths parsed
         pythontail = PythonTail()
         pythontail.follow(paths)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
 
