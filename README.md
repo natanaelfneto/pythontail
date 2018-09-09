@@ -5,7 +5,7 @@
 </p>
 
 **PythonTail** was based on the python-tail module at [github.com/kasun/python-tail](https://github.com/kasun/python-tail)
-Version: **0.1**
+Version: **0.2**
 ***
 # Table of Contents
 * [Getting Started](#getting-started)
