@@ -1,10 +1,10 @@
 <p align="left">
   <a href="#">
-    <img alt="pytail-logo" src="https://raw.githubusercontent.com/natanaelfneto/pytail/master/pytail-logo.png" width="240"/>
+    <img alt="pythontail-logo" src="https://raw.githubusercontent.com/natanaelfneto/pythontail/master/pythontail-logo.png" width="240"/>
   </a>
 </p>
 
-**PyTail** was based on the python-tail module at [github.com/kasun/python-tail](https://github.com/kasun/python-tail)
+**PythonTail** was based on the python-tail module at [github.com/kasun/python-tail](https://github.com/kasun/python-tail)
 Version: **0.1**
 ***
 # Table of Contents
@@ -19,16 +19,16 @@ Version: **0.1**
 _installation is still under development, to make it work_
 _clone or download the repository at:_
 ```Shell
-git clone https://github.com/natanaelfneto/pytail.git
+git clone https://github.com/natanaelfneto/pythontail.git
 ```
 _run the command as examplified:_
 ```Shell
-python pytail/setup.py install (still not working)
+python pythontail/setup.py install (still not working)
 ```
 _enjoy_
 ***
 ## Usage
-_this messagem can also be found with_ **python pytail.py -h** _command_
+_this messagem can also be found with_ **python pythontail.py -h** _command_
 ```ShellSession
 ```
 ## License

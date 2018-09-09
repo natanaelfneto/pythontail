@@ -2,7 +2,7 @@
 from __future__ import print_function
 # Authorship
 __description__ = '''
-This PyTail module:
+This PythonTail module:
 # Author - Natanael F. Neto <natanaelfneto@outlook.com>
 # Source - https://github.com/natanaelfneto/pytail
 
@@ -15,7 +15,7 @@ but improved as described on CHANGELOG and README files
 
 # Installation
 '''
-pip install pytail
+pip install pythontail
 '''
 
 # Usage example
@@ -31,16 +31,16 @@ import sys
 import time
 
 # module name
-__project__ = 'pytail'
+__project__ = 'pythontail'
 # module version
 __version__ = "0.1"
 
 # main class
-class PyTail(object):
+class PythonTail(object):
     # represents a tail command
     def __init__(self):
         ''' 
-            Initiate a PyTail instance.
+            Initiate a PythonTail instance.
             
             Arguments:
          '''
@@ -75,7 +75,7 @@ class PathsValidity(object):
     # path validity init
     def __init__(self):
         ''' 
-            Initiate a PyTail Path Validity instance.
+            Initiate a PythonTail Path Validity instance.
         '''
 
     # path validity checker function
@@ -165,6 +165,6 @@ if __name__ == "__main__":
         paths = paths.checker(args.follow)
 
         # tail follow paths parsed
-        pytail = PyTail()
-        pytail.follow(paths)
+        pythontail = PythonTail()
+        pythontail.follow(paths)
 
