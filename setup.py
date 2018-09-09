@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pythontail",
-    version="0.3",
+    version="0.4",
     author="natanaelfneto",
     author_email="natanaelfneto@outlook.com",
     description="Unix tail implementation in python",

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Released]
 
+### 0.4 - 2018-09-09
+#### Changed
+- fixed setup.py file according to pypi guide
+
 ### 0.3 - 2018-09-09
 #### Changed
 - added logger to a self variable to be used inside instancies of classes outside of main() function

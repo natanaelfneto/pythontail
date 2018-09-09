@@ -33,7 +33,7 @@ import time
 # module name
 __project__ = 'pythontail'
 # module version
-__version__ = "0.2"
+__version__ = "0.4"
 
 # main class
 class PythonTail(object):
