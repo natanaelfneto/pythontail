@@ -1,20 +1,18 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from pythontail import pythontail as module
 import re
 import setuptools
 
-with open("README.md", "r") as file:
-    long_description = file.read()
-
 setuptools.setup(
-    name="pythontail",
-    version="0.5",
-    author="natanaelfneto",
-    author_email="natanaelfneto@outlook.com",
-    description="Unix tail implementation in python",
-    long_description=long_description,
+    name=module.__project__,
+    version=module.__version__,
+    author=module.__author__,
+    author_email=module.__authoremail__,
+    description=module.short_description,
+    long_description=module.long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/natanaelfneto/pythontail",
+    url=module.__source__,
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

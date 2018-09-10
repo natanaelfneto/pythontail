@@ -21,7 +21,7 @@ Version: **0.5**
 #### Installation Process
 _install as a module:_
 ```Shell
-pip install pythontail
+pip install tail
 ```
 _and use it as:_
 ```Python

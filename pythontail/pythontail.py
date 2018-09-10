@@ -1,23 +1,45 @@
 #!/usr/bin/env python
 from __future__ import print_function
-# Authorship
-__author__ = '@natanaelfneto'
+# project long description
+with open("README.md", "r") as file:
+    long_description = file.read()
+# project name
+__project__ = "pythontail"
+# project version
+__version__ = "0.6"
+# prohect author
+__author__ = "natanaelfneto"
+# project source code
+__authoremail__ = "natanaelfneto@outlook.com"
+__source__ = "https://github.com/natanaelfneto/pythontail"
+# project general description
 __description__ = '''
 This PythonTail module:
 
-Unix tail implementation in python
+is a Unix tail implementation in python
 
 # Author - Natanael F. Neto <natanaelfneto@outlook.com>
 # Source - https://github.com/natanaelfneto/pythontail
 '''
-# Installation
+# project short description
+short_description = "Unix tail implementation in python"
+# Installation for usage as module
 '''
 pip install pythontail
 '''
-# Usage example
+# Usage example as module
 '''
 from pythontail import tail
-tail.main(['-h'])
+tail.args(['-h'])
+''' 
+# Installation for terminal use
+'''
+git clone https://github.com/natanaelfneto/pythontail
+cd pythontail
+'''
+# Usage example within terminal
+'''
+python pythontail.py -h
 ''' 
 # third party imports
 import argparse
@@ -26,10 +48,6 @@ import mmap
 import os
 import sys
 import time
-# module name
-__project__ = 'pythontail'
-# module version
-__version__ = "0.5"
 # main class
 class PythonTail(object):
     # represents a tail command
