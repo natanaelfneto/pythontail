@@ -16,7 +16,7 @@ pip install pythontail
 '''
 # Usage example
 '''
-from pythontail import pythontail as tail
+from pythontail import tail
 tail.main(['-h'])
 ''' 
 # third party imports
@@ -29,7 +29,7 @@ import time
 # module name
 __project__ = 'pythontail'
 # module version
-__version__ = "0.4"
+__version__ = "0.5"
 # main class
 class PythonTail(object):
     # represents a tail command

@@ -8,7 +8,7 @@
 </p>
 
 **PythonTail** Unix tail implementation in python.
-Version: **0.4**
+Version: **0.5**
 ***
 # Table of Contents
 * [Getting Started](#getting-started)
@@ -25,7 +25,7 @@ pip install pythontail
 ```
 _and use it as:_
 ```Python
-from pythontail import pythontail as tail
+from pythontail import tail
 tail.args(['-h'])
 ```
 _use as terminal command:_
