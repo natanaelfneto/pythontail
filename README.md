@@ -1,10 +1,13 @@
 <p align="left">
   <a href="#">
-    <img alt="pythontail-logo" src="https://raw.githubusercontent.com/natanaelfneto/pythontail/master/pythontail-logo.png" width="240"/>
+    <img 
+      alt="pythontail-logo" 
+      src="https://raw.githubusercontent.com/natanaelfneto/pythontail/master/assets/pythontail-logo.png" 
+      width="240"/>
   </a>
 </p>
 
-**PythonTail** was based on the python-tail module at [github.com/kasun/python-tail](https://github.com/kasun/python-tail)
+**PythonTail** Unix tail implementation in python.
 Version: **0.4**
 ***
 # Table of Contents
@@ -16,20 +19,26 @@ Version: **0.4**
 ## Getting Started
 ### Via Bash
 #### Installation Process
-_installation is still under development, to make it work_
-_clone or download the repository at:_
+_install as a module:_
+```Shell
+pip install pythontail
+```
+_and use it as:_
+```Python
+from pythontail import pythontail as tail
+tail.main(['-h'])
+```
+_use as terminal command:_
 ```Shell
 git clone https://github.com/natanaelfneto/pythontail.git
-```
-_run the command as examplified:_
-```Shell
-python pythontail/setup.py install (still not working)
+python pythontail.py -h
 ```
 _enjoy_
 ***
 ## Usage
 _this messagem can also be found with_ **python pythontail.py -h** _command_
 ```ShellSession
+
 ```
 ## License
 MIT License

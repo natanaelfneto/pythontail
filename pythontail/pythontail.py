@@ -1,26 +1,23 @@
 #!/usr/bin/env python
 from __future__ import print_function
 # Authorship
+__author__ = '@natanaelfneto'
 __description__ = '''
 This PythonTail module:
+
+Unix tail implementation in python
+
 # Author - Natanael F. Neto <natanaelfneto@outlook.com>
-# Source - https://github.com/natanaelfneto/pytail
-
-is based on the python-tail module from
-# Author - Kasun Herath <kasunh01 at gmail.com>
-# Source - https://github.com/kasun/python-tail
-
-but improved as described on CHANGELOG and README files
+# Source - https://github.com/natanaelfneto/pythontail
 '''
-
 # Installation
 '''
 pip install pythontail
 '''
-
 # Usage example
 '''
-
+from pythontail import pythontail as tail
+tail.main(['-h'])
 ''' 
 # third party imports
 import argparse
@@ -29,25 +26,26 @@ import mmap
 import os
 import sys
 import time
-
 # module name
 __project__ = 'pythontail'
 # module version
 __version__ = "0.4"
-
 # main class
 class PythonTail(object):
     # represents a tail command
     def __init__(self, logger):
-        ''' 
-            Initiate a PythonTail instance.
-            
-            Arguments:
-         '''
+        '''
+            Initiate a PythonTail instance
+        '''
         self.logger = logger
-
     # function to mmap file and get last line without buffering all data into memory
     def getlastline(self, file):
+        '''
+            Function to keep getting last line of a file as it updates
+
+            Arguments:
+                file: file to be tailed
+        '''
         with open(file, 'rb') as f:
             try:
                 f.seek(-2, os.SEEK_END)
@@ -56,10 +54,15 @@ class PythonTail(object):
                 return f.readline().decode()
             except IOError:
                 pass    
-                
-        
     # function to tail follow all parsed paths
     def follow(self, paths):
+        '''
+            Function to get all parsed paths and call the getlasfile() function
+            to each one at a time and merge in the standard output
+
+            Arguments:
+                paths: array of files to be tailed
+        '''
     # check if validate paths remained
         if not len(paths) > 0:
             self.logger.error('No paths were successfully parsed. Exiting...')
@@ -70,7 +73,6 @@ class PythonTail(object):
                 if last_line != self.getlastline(path) and self.getlastline(path) is not None:
                     last_line = self.getlastline(path)
                     print(last_line, end='\r')
-
 # paths argument parser
 class PathsValidity(object):
     # path validity init
@@ -79,9 +81,15 @@ class PathsValidity(object):
             Initiate a PythonTail Path Validity instance.
         '''
         self.logger = logger
-
     # path validity checker function
     def checker(self, paths):
+        '''
+            Function to check if each parsed path is a valid system file
+            and if it can be accessed by the code.
+
+            Arguments:
+                paths: array of files to be checked
+        '''
         # set basic variables
         valid_paths = []    # array for AEs
         self.logger.debug('checking validity of parsed files')
@@ -95,8 +103,7 @@ class PathsValidity(object):
                     therefore will be ignored", path
                     )
         return valid_paths
-
-def main(args):
+def args(args):
     # argparser init
     parser = argparse.ArgumentParser(
         description='Unix tail implementation in python'
@@ -127,13 +134,11 @@ def main(args):
     )
     # passing filtered arguments as array
     args = parser.parse_args(args) 
-
     # output software version info
     if args.version:
-        print(__project__+' version '+__version__+'\n'+__description__)
-        os.system('python '+os.path.dirname(os.path.realpath(__file__))+'/'+__project__+'.py -h')
+        print(__project__+' version '+__version__+'\n'+__description__+'\n'+'Author: '+__author__)
+        # os.system('python '+os.path.dirname(os.path.realpath(__file__))+'/'+__project__+'.py -h')
         sys.exit()
-
     # setting logging basic config avriables
     log_folder = 'log'
     if args.debug:
@@ -146,10 +151,9 @@ def main(args):
         log_file = log_folder+'/'+__project__+'_info.log'
         log_format = '%(asctime)s %(levelname)s %(message)s'
         log_date_format = '%Y-%m-%d %H:%M:%S'
-    
+    # check if log folder exists
     if not os.path.exists(log_folder):
         os.makedirs(log_folder)
-
     # setting logging basic config
     logging.basicConfig(
         level=getattr(logging,log_level),
@@ -159,17 +163,15 @@ def main(args):
         filemode='a+'
         )
     logger = logging.getLogger(__name__)
-
     # tail follow paths
     if args.follow:
         # check validity of the paths parsed
         paths = PathsValidity(logger)
         paths = paths.checker(args.follow)
-
         # tail follow paths parsed
         pythontail = PythonTail(logger)
         pythontail.follow(paths)
-
+# run main function
 if __name__ == "__main__":
-    main(sys.argv[1:])
-
+    args(sys.argv[1:])
+# end of code
