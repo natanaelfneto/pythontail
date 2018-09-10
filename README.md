@@ -7,7 +7,7 @@
   </a>
 </p>
 
-**PythonTail** Unix tail implementation in python.
+**PythonTail** a Unix tail implementation in python.
 Version: **0.5**
 ***
 # Table of Contents
@@ -38,7 +38,15 @@ _enjoy_
 ## Usage
 _this messagem can also be found with_ **python pythontail.py -h** _command_
 ```ShellSession
+usage: pythontail.py [-h] [-f FOLLOW [FOLLOW ...]] [-d] [-V]
 
+Unix tail implementation in python 
+
+optional arguments:
+-h, --help                                            show this help message and exit
+-f FOLLOW [FOLLOW ...], --follow FOLLOW [FOLLOW ...]  check if filepaths are valid
+-d, --debug                                           process debug flag
+-V, --version                                         output software version
 ```
 ## License
 MIT License
