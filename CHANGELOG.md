@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Released]
 
+### 0.5 - 2018-09-09
+#### Changed
+- changed main function from main() to args() for better code writing as imported module tail.args(['-h'])
+
 ### 0.4 - 2018-09-09
 #### Changed
 - fixed setup.py file according to pypi guide
