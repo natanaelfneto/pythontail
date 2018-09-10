@@ -7,7 +7,7 @@
   </a>
 </p>
 
-**PythonTail** a Unix tail implementation in python.
+**PythonTail**: a Unix tail implementation in python.
 Version: **0.5**
 ***
 # Table of Contents
