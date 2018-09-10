@@ -26,7 +26,7 @@ pip install pythontail
 _and use it as:_
 ```Python
 from pythontail import pythontail as tail
-tail.main(['-h'])
+tail.args(['-h'])
 ```
 _use as terminal command:_
 ```Shell
