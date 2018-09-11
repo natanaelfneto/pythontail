@@ -14,6 +14,7 @@ Version: **0.5**
 * [Getting Started](#getting-started)
     * [Installation process](#installation-process)
     * [Usage](#usage)
+    * [Examples](#examples)
 * [License](#license)
 ***
 ## Getting Started
@@ -47,6 +48,45 @@ optional arguments:
 -f FOLLOW [FOLLOW ...], --follow FOLLOW [FOLLOW ...]  check if filepaths are valid
 -d, --debug                                           process debug flag
 -V, --version                                         output software version
+```
+## Examples
+### First we need a fake log file
+Generate many live fake logs files by running:
+```Shell
+python pythontail/test/fake_log_generator.py <integer> &
+```
+_for the example1.py, generate the minimum of 2 fake log files_
+This will create two **fake_n.log** file in _pythontail/log/fake_n.log_ that can be tailed
+### Using it as console command for tail files
+```
+python pythontail/pythontail.py -f ./pythontail/log/fake_1.log ./pythontail/log/fake_2.log
+```
+###Using it as python module for tail files
+Create a virtual env and activate it (can be pyenv or virtualenv or any other)
+```Shell
+mkvirtualenv pythontail
+workon pythontail
+```
+Install pythontail module
+```Shell
+pip install pythontail
+```
+Create your code as the available example1.py
+```Python
+from pythontail import tail
+import os
+
+# get as many filepaths you want to be tailed
+log_file_1 = 'dir/log/fake_1.log'))
+log_file_2 = 'dir/log/fake_2.log'))
+...
+log_file_n = 'dir/log/fake_n.log'))
+
+# tail them
+tail.args(['-f', log_file_1, log_file_2, ..., log_file_n])
+```
+```Shell
+python pythontail/examples/example1.py
 ```
 ## License
 MIT License

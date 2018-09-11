@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 from __future__ import print_function
-# project long description
-with open("README.md", "r") as file:
-    long_description = file.read()
 # project name
 __project__ = "pythontail"
 # project version

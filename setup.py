@@ -4,13 +4,17 @@ from pythontail import pythontail as module
 import re
 import setuptools
 
+# project long description
+with open("README.md", "r") as file:
+    long_description = file.read()
+
 setuptools.setup(
     name=module.__project__,
     version=module.__version__,
     author=module.__author__,
     author_email=module.__authoremail__,
     description=module.short_description,
-    long_description=module.long_description,
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url=module.__source__,
     packages=setuptools.find_packages(),
