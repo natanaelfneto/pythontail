@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 #### Changed
 - moved variables of the project configuration to the main file: pythontail.py and imported in setup.py file
+- fixed log level for console output errors and debug flag outputs
 
 ### 0.5 - 2018-09-09
 #### Changed

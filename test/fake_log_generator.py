@@ -19,6 +19,15 @@ def setup(i):
     fake_log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     fake_log_date_format = '%Y-%m-%d %H:%M:%S'
 
+    # check if log folder exists
+    if not os.path.exists(fake_log_folder):
+        print("Fake log folder:",fake_log_folder,"not found")
+        try:
+            os.makedirs(fake_log_folder)
+            print("Fake log folder:",fake_log_folder,"created")
+        except Exception  as e:
+            print("Fake log folder:",fake_log_folder,"could not be created, error:", e)
+
     # setup of handlers
     handler = logging.FileHandler(fake_log_file)        
     handler.setFormatter(fake_log_formatter)
@@ -30,15 +39,6 @@ def setup(i):
 
     # first log message inside log file
     logger.info("Fake log %s configuration is done", str(i))
-
-    # check if log folder exists
-    if not os.path.exists(fake_log_folder):
-        logger.info("Fake log folder: %s not found",fake_log_folder)
-        try:
-            os.makedirs(fake_log_folder)
-            logger.info("Fake log folder: %s created",fake_log_folder)
-        except Exception  as e:
-            logger.error("Fake log folder: %s could not be created, error:",fake_log_folder, e)
 
     # check if log file exists
     if os.path.exists(fake_log_file):
@@ -77,11 +77,13 @@ if __name__ == "__main__":
 
     # set loggin config values
     fake_log_level = 'INFO'
+    fake_log_format = '%(asctime)s %(levelname)s %(message)s'
     fake_log_date_format = '%Y-%m-%d %H:%M:%S'
 
     # parsinf logging basic config
     logging.basicConfig(
         level=getattr(logging,fake_log_level),
+        format=fake_log_format,
         datefmt=fake_log_date_format,
         filemode='w+'
         )
