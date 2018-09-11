@@ -55,13 +55,13 @@ Generate many live fake logs files by running:
 ```Shell
 python pythontail/test/fake_log_generator.py <integer> &
 ```
-_for the example1.py, generate the minimum of 2 fake log files_
-This will create two **fake_n.log** file in _pythontail/log/fake_n.log_ that can be tailed
+_for the example1.py, generate the minimum of 2 fake log files_\
+This will create two **fake_n.log** files in _pythontail/log/fake_n.log_ that can be tailed
 ### Using it as console command for tail files
 ```
 python pythontail/pythontail.py -f ./pythontail/log/fake_1.log ./pythontail/log/fake_2.log
 ```
-###Using it as python module for tail files
+### Using it as python module for tail files
 Create a virtual env and activate it (can be pyenv or virtualenv or any other)
 ```Shell
 mkvirtualenv pythontail
@@ -71,7 +71,7 @@ Install pythontail module
 ```Shell
 pip install pythontail
 ```
-Create your code as the available example1.py
+Create your code as the available in _pythontail/examples/example1.py_\
 ```Python
 from pythontail import tail
 import os
@@ -85,6 +85,7 @@ log_file_n = 'dir/log/fake_n.log'))
 # tail them
 tail.args(['-f', log_file_1, log_file_2, ..., log_file_n])
 ```
+Check the output of example1 by running the script file:
 ```Shell
 python pythontail/examples/example1.py
 ```
