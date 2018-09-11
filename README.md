@@ -23,15 +23,15 @@ Version: **0.6**
 #### Unix tail implementation list
 -   item:           `defaultoutput line = 10`\
     descrtption:    default output with 10 lines for each tailed file\
-    status:         [**OK**]\
+    status:         [**OK**]
 -   item:           `-c, --bytes=[+]NUM`\
     description:    output the last NUM bytes; or use -c +NUM to output starting\
                     with byte NUM of each file\
-    status:         [**PENDING**]\
+    status:         [**PENDING**]
 -   item:           `-f, --follow[={name|descriptor}]`\
     description:    output appended data as the file grows;\
                     an absent option argument means 'descriptor'\
-    status:         [**OK**]\
+    status:         [**OK**]
 -   item:           `-n, --lines=[+]NUM`\
     description:    output the last NUM lines, instead of the last 10; or use -n\
                     +NUM to output starting with line NUM\
@@ -72,16 +72,16 @@ Version: **0.6**
     description:    tail as many files as wanted with all available parameters working as well\
     status:         [**OK**]
 #### Unique tail implementations
--   item:           `usage as both terminal command and as python module`
-    description:    the use of all parameters within terminal command line
-                    and by importing as a module inside a python script
+-   item:           `usage as both terminal command and as python module`\
+    description:    the use of all parameters within terminal command line\
+                    and by importing as a module inside a python script\
     status:         [**OK**]
--   item:           `-d, --debug`
-    description:    create a log file and register all ocurrencies of regular
-                    behavior information, debug and errors as the timestamp and logged user
+-   item:           `-d, --debug`\
+    description:    create a log file and register all ocurrencies of regular\
+                    behavior information, debug and errors as the timestamp and logged user\
     status:         [**OK**]
--   item:           `?`
-    description:    tail files over tcp/ip
+-   item:           `?`\
+    description:    tail files over tcp/ip\
     status:         [**PENDING**]
 ### Via Bash
 #### Installation Process
