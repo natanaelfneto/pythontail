@@ -28,59 +28,59 @@ Version: **0.6**
     description:    output the last NUM bytes; or use -c +NUM to output starting
                     with byte NUM of each file
     status:         [**PENDING**]
--   item:           -f, --follow[={name|descriptor}]
+-   item:           `-f, --follow[={name|descriptor}]`
     description:    output appended data as the file grows;
                     an absent option argument means 'descriptor'
     status:         [**OK**]
--   item:           -n, --lines=[+]NUM
+-   item:           `-n, --lines=[+]NUM`
     description:    output the last NUM lines, instead of the last 10; or use -n
                     +NUM to output starting with line NUM
     status:         [**OK**]
--   item:           --max-unchanged-stats=N
+-   item:           `--max-unchanged-stats=N`
     description:    with --follow=name, reopen a FILE which has not
                     changed size after N (default 5) iterations to see if it has
                     been unlinked or renamed (this is the usual case of rotated
                     log files); with inotify, this option is rarely useful
     status:         [**PENDING**]
--   item:           --pid=PID
+-   item:           `--pid=PID`
     description:    with -f, terminate after process ID, PID dies
     status:         [**PENDING**]
--   item:           -q, --quiet, --silent
+-   item:           `-q, --quiet, --silent`
     description:    never output headers giving file names
     status:         [**PENDING**]
--   item:           --retry
+-   item:           `--retry`
     description:    keep trying to open a file if it is inaccessible
     status:         [**PENDING**]
--   item:           -s, --sleep-interval=N
+-   item:           `-s, --sleep-interval=N`
     description:    with -f, sleep for approximately N seconds (default 1.0)
                     between iterations; with inotify and --pid=P, check process P
                     at least once every N seconds
     status:         [**PENDING**]
--   item:           -v, --verbose
+-   item:           `-v, --verbose`
     description:    always output headers giving file names
     status:         [**PENDING**]
--   item:           -z, --zero-terminated
+-   item:           `-z, --zero-terminated`
     description:    line delimiter is NUL, not newline
     status:         [**PENDING**]
--   item:           --help
+-   item:           `--help`
     description:    display this help and exit
     status:         [**OK**]
--   item:           --version
+-   item:           `--version`
     description:    output version information and exit
     status:         [**OK**]
--   item:           multiple files support
+-   item:           `multiple files support`
     description:    tail as many files as wanted with all available parameters working as well
     status:         [**OK**]
 #### Unique tail implementations
--   item:           usage as both terminal command and as python module
+-   item:           `usage as both terminal command and as python module`
     description:    the use of all parameters within terminal command line
                     and by importing as a module inside a python script
     status:         [**OK**]
--   item:           -d, --debug
+-   item:           `-d, --debug`
     description:    create a log file and register all ocurrencies of regular
                     behavior information, debug and errors as the timestamp and logged user
     status:         [**OK**]
--   item:           ?
+-   item:           `?`
     description:    tail files over tcp/ip
     status:         [**PENDING**]
 ### Via Bash
