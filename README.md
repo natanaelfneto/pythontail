@@ -21,7 +21,7 @@ Version: **0.6**
 ## Getting Started
 ### Unix version comparison
 #### Unix tail implementation list
--   item:           defaultoutput line = 10\
+-   item:           `defaultoutput line = 10`\
     descrtption:    default output with 10 lines for each tailed file\
     status:         [**OK**]\
 -   item:           `-c, --bytes=[+]NUM`\
@@ -35,42 +35,42 @@ Version: **0.6**
 -   item:           `-n, --lines=[+]NUM`\
     description:    output the last NUM lines, instead of the last 10; or use -n\
                     +NUM to output starting with line NUM\
-    status:         [**OK**]\
+    status:         [**OK**]
 -   item:           `--max-unchanged-stats=N`\
     description:    with --follow=name, reopen a FILE which has not\
                     changed size after N (default 5) iterations to see if it has\
                     been unlinked or renamed (this is the usual case of rotated\
                     log files); with inotify, this option is rarely useful\
-    status:         [**PENDING**]\
+    status:         [**PENDING**]
 -   item:           `--pid=PID`\
     description:    with -f, terminate after process ID, PID dies\
-    status:         [**PENDING**]\
+    status:         [**PENDING**]
 -   item:           `-q, --quiet, --silent`\
     description:    never output headers giving file names\
-    status:         [**PENDING**]\
+    status:         [**PENDING**]
 -   item:           `--retry`\
     description:    keep trying to open a file if it is inaccessible\
-    status:         [**PENDING**]\
+    status:         [**PENDING**]
 -   item:           `-s, --sleep-interval=N`\
     description:    with -f, sleep for approximately N seconds (default 1.0)\
                     between iterations; with inotify and --pid=P, check process P\
                     at least once every N seconds\
-    status:         [**PENDING**]\
+    status:         [**PENDING**]
 -   item:           `-v, --verbose`\
     description:    always output headers giving file names\
-    status:         [**PENDING**]\
+    status:         [**PENDING**]
 -   item:           `-z, --zero-terminated`\
     description:    line delimiter is NUL, not newline\
-    status:         [**PENDING**]\
+    status:         [**PENDING**]
 -   item:           `--help`\
     description:    display this help and exit\
-    status:         [**OK**]\
+    status:         [**OK**]
 -   item:           `--version`\
     description:    output version information and exit\
-    status:         [**OK**]\
+    status:         [**OK**]
 -   item:           `multiple files support`\
     description:    tail as many files as wanted with all available parameters working as well\
-    status:         [**OK**]\
+    status:         [**OK**]
 #### Unique tail implementations
 -   item:           `usage as both terminal command and as python module`
     description:    the use of all parameters within terminal command line
