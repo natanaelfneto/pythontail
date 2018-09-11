@@ -16,8 +16,8 @@ def setup(i):
     # setup of loggin config values
     fake_log_level = 'INFO'
     fake_log_file = fake_log_folder+'/fake_'+str(i)+'.log'
-    fake_log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     fake_log_date_format = '%Y-%m-%d %H:%M:%S'
+    fake_log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
     # check if log folder exists
     if not os.path.exists(fake_log_folder):

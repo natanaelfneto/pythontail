@@ -79,7 +79,7 @@ class PythonTail(object):
                 pass    
 
     # function to tail follow all parsed paths
-    def follow(self, paths):
+    def follow(self, lines, files):
         '''
             Function to get all parsed paths and call the getlasfile() function
             to each one at a time and merge in the standard output
@@ -89,21 +89,34 @@ class PythonTail(object):
         '''
 
         # check if validate paths remained
-        if not len(paths) > 0:
+        if not len(files) > 0:
             self.logger.error('No paths were successfully parsed. Exiting...')
             sys.exit()
 
         # still no last line
         last_line = ''
 
+        # start line counter
+        lines_counter = 0
+
         # loop until user ends process
         while True:
-            for path in paths:
+
+            # break when line counter achieve lines value
+            if lines_counter == lines and lines != 0:
+                break
+
+            # line vounter incremental
+            lines_counter = lines_counter + 1
+
+            # loop trhough parsed files paths
+            for file in files:
+
                 # do not update if the saved last line is identical to new retrieved line or if its None
-                if last_line != self.getlastline(path) and self.getlastline(path) is not None:
+                if last_line != self.getlastline(file) and self.getlastline(file) is not None:
 
                     # update last line variable
-                    last_line = self.getlastline(path)
+                    last_line = self.getlastline(file)
 
                     # output retrieve las line
                     print(last_line, end='\r')
@@ -121,7 +134,7 @@ class PathsValidity(object):
         self.logger = logger
         
     # path validity checker function
-    def checker(self, paths):
+    def checker(self, files):
         '''
             Function to check if each parsed path is a valid system file
             and if it can be accessed by the code.
@@ -130,38 +143,38 @@ class PathsValidity(object):
                 paths: array of files to be checked
         '''
 
-        # set basic variables
-        valid_paths = []
+        # set basic variable for valid files
+        valid_files = []
 
         # loop check through parsed path
         self.logger.debug('checking validity of parsed files')
-        for path in paths:
+        for file in files:
 
             # append path if it exists, is accessible and is a file
-            if os.access(path, os.F_OK) and os.access(path, os.R_OK) and os.path.isfile(path) :
-                self.logger.debug("Path %s is successfully parsed", path)
-                valid_paths.append(path)
+            if os.access(file, os.F_OK) and os.access(file, os.R_OK) and os.path.isfile(file) :
+                self.logger.debug("Path %s is successfully parsed", file)
+                valid_files.append(file)
 
             # if not, log the error
             else:
                 self.logger.debug( \
                     "Path '%s' could not be found or does not have read permitions or it is not a file, \
-                    therefore will be ignored", path
+                    therefore will be ignored", file
                     )
         
-        # return all parsed valid paths
-        return valid_paths
+        # return all parsed valid files
+        return valid_files
 
 # logger configuration function
-def logger_config(args):
+def logger_config(debug=False):
 
     # setup of log folder
     log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
 
     # set logging basic config variables
     log_level = 'INFO'
-    log_format = '%(asctime)s %(project)s-%(version)s --%(levelname)s-- user: %(user)s LOG: %(message)s'
     log_date_format = '%Y-%m-%d %H:%M:%S'
+    log_format = '%(asctime)s %(project)s-%(version)s --%(levelname)s-- user: %(user)s LOG: %(message)s'
     log_file = log_folder+'/'+__project__+'.log'
 
     # extra data into log formatter
@@ -178,7 +191,7 @@ def logger_config(args):
     logger_name = __project__+'-'+__version__
 
     # check debug flag
-    if args.debug:
+    if debug:
         log_level = 'DEBUG'
     else:
         log_level = 'ERROR'
@@ -223,11 +236,31 @@ def args(args):
         description=short_description
     )
 
-    # path argument parser
+    # prevent follow and lines flag to be setted at the same time
+    group = parser.add_mutually_exclusive_group(required=False)
+
+    # files with limited lines
     parser.add_argument(
-        '-f','--follow',
+        'files',
         nargs='+',
         help='dicom folders or files paths', 
+        default=[]
+    )
+
+    # number of lines to limit tail
+    group.add_argument(
+        '-n','--lines',
+        nargs='+',
+        type=int,
+        help='number of lines to follow in total array of files', 
+        default=[10],
+        required=False
+    )
+
+    # path argument parser
+    group.add_argument(
+        '-f','--follow',
+        help='flag to not limit number of lines tailed', 
         default=False,
         required=False
     )
@@ -251,29 +284,45 @@ def args(args):
     )
 
     # passing filtered arguments as array
-    args = parser.parse_args(args) 
-
-    # call logger configuration function
-    logger = logger_config(args)
+    args = parser.parse_args(args)
     
-    # tail follow paths
-    if args.follow:
+    # if any file being parsed
+    if args.files:
 
-        # check validity of the paths parsed
-        paths = PathsValidity(logger)
-        paths = paths.checker(args.follow)
-
-        # tail follow paths parsed
-        pythontail = PythonTail(logger)
-        pythontail.follow(paths)
+        # set limit of lines to zero with follow flag
+        if args.follow:
+            lines = [0]
+        
+        # check and tail files
+        files(args.debug, args.lines[0], args.files)
 
     # else no path was pass within the option
     else:
         logger.error('No option or argument was passed. Please try again\n')
         parser.print_help()
 
-def follow(paths):
-    pass
+# function to check and tail files
+def files(debug=False, lines=[10], files=[]):
+
+    # call logger configuration function
+    logger = logger_config(debug)
+
+    # log variables
+    logger.debug('DEBUG flags was setted as: %s', debug)
+    logger.debug('LINES limit is: %s', lines)
+    logger.debug('PATHS was parsed as an array: %s', files)
+
+    # create instance of class
+    paths = PathsValidity(logger)
+
+    # check each parsed path of file
+    files = paths.checker(files)
+    
+    # create instance of class
+    pythontail = PythonTail(logger)
+
+    # tail each parsed path of file
+    pythontail.follow(lines, files)
 
 # run function on command call
 if __name__ == "__main__":

@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 #### Added
 - added example folder with basic use of pythontail for multiple files
 - added a fake log generator for tests inside a test folder
+- added commands '-n' for limit lines 
+- added standard value of 10 lines for tailed files with no parameters
+- added mutual block usage for '-f' and -n commands
+- added '-n 0' behavior to match the '-f'
 
 #### Changed
 - moved variables of the project configuration to the main file: pythontail.py and imported in setup.py file
 - fixed log level for console output errors and debug flag outputs
+- removed obligatory use of '-f' for filepaths and correct to the regular unix usage of follow files
 
 ### 0.5 - 2018-09-09
 #### Changed
