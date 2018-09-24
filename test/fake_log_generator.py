@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 from __future__ import print_function
+
 # third party imports
 import logging
 import getpass
 import time
 import os
 import sys
+
 
 # get project log folder
 fake_log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
@@ -54,12 +56,19 @@ def loop(logger):
     # setting up the output message
     output_message = str(getpass.getuser())+' Fake log file output!'
 
+    # 
+    iteration = 0
+
     # get a while loop to populate the fake log file
     while True:
+
+        # 
+        iteration = iteration + 1
+
         # write log for each file instance
         for i in logger:
             # log output message in especific logger
-            logger[i].info(output_message+' instance %s',str(i))
+            logger[i].info("{0}, instance {1}, iteration {2}".format(output_message, str(i), str(iteration)))
             # wait before writing a new line
             time.sleep(2)
 

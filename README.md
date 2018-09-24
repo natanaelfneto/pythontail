@@ -8,7 +8,7 @@
 </p>
 
 **PythonTail**: a Unix tail implementation in python.
-Version: **0.6**
+Version: **0.7**
 ***
 # Table of Contents
 * [Getting Started](#getting-started)
@@ -21,7 +21,7 @@ Version: **0.6**
 ## Getting Started
 ### Unix version comparison
 #### Unix tail implementation list
--   item:           `defaultoutput line = 10`\
+-   item:           `default output line = 10`\
     descrtption:    default output with 10 lines for each tailed file\
     status:         [**OK**]
 -   item:           `-c, --bytes=[+]NUM`\
