@@ -47,7 +47,7 @@ Version: **0.7**
     status:         [**PENDING**]
 -   item:           `-q, --quiet, --silent`\
     description:    never output headers giving file names\
-    status:         [**PENDING**]
+    status:         [**OK**]
 -   item:           `--retry`\
     description:    keep trying to open a file if it is inaccessible\
     status:         [**PENDING**]
@@ -55,7 +55,7 @@ Version: **0.7**
     description:    with -f, sleep for approximately N seconds (default 1.0)\
                     between iterations; with inotify and --pid=P, check process P\
                     at least once every N seconds\
-    status:         [**PENDING**]
+    status:         [**OK**]
 -   item:           `-v, --verbose`\
     description:    always output headers giving file names\
     status:         [**PENDING**]

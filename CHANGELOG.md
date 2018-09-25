@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### 0.7 - 2018-09-22
 ### Added
 - logging handler configurations class and global variable
-- faker log generator inside tests now print instance and line 
+- faker log generator inside tests now print instance and line
+- quiet input option [-q, --quiet, --silent] flag parameter to remove source heads from tailing process
+- sleep interval time input [-s, --sleep, --sleep-interval] that accespts integer values for sleep in seconds between output updates of --follow flag
 
 ### Changed
 - class PythonTail is now GetTail

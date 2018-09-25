@@ -33,6 +33,7 @@ import getpass
 import logging
 import os
 import sys
+import time
 
 
 # main class
@@ -199,6 +200,9 @@ class GetTail(object):
                     print(updated_last_line, end='\r')
                     last_line[index] = updated_last_line
 
+                    if sleep_time:
+                        time.sleep(sleep_time)
+
     #  exit function for class basic routine
     def __exit__(self, exc_type, exc_value, traceback):
         pass
@@ -263,7 +267,7 @@ class PathsValidity(object):
 class Logger(object):
 
     # path validity init
-    def __init__(self, folder=None, format=None, extra=None, debug_flag=False, quiet_flag=False verbose_flag=False):
+    def __init__(self, folder=None, format=None, extra=None, debug_flag=False, quiet_flag=False, verbose_flag=False):
         ''' 
             Initiate a DICOM Populate Logger instance.
             Argument:
@@ -334,6 +338,20 @@ class Logger(object):
 
         self.adapter = logger
 
+def __exit__():
+    '''
+    '''
+    # set output message
+    output = "" +\
+        "usage: pythontail.py [-h] [-f | -n LINES] [-d] [-v] sources [sources ...]\n" +\
+        "pythontail.py: error: argument -f/--follow: not allowed with argument -n/--lines"
+
+    # print output message
+    print(output, end='')
+
+    # exit on error
+    sys.exit()
+
 # command line argument parser
 def args(args):
     '''
@@ -384,6 +402,15 @@ def args(args):
         required=False
     )
 
+    # sleep interval input
+    parser.add_argument(
+        '-s','--sleep', '--sleep-interval',
+        type=int, 
+        help='with --follow, sleep for approximately N seconds (default 0) between iterations; least once every N seconds',
+        default=None,
+        required=False
+    )
+
     # debug flag argument parser
     parser.add_argument(
         '-d','--debug',
@@ -410,36 +437,43 @@ def args(args):
 
         # check for known exception
         if args.lines is not None:
-
-            # set output message
-            output = "" +\
-                "usage: pythontail.py [-h] [-f | -n LINES] [-d] [-v] sources [sources ...]\n" +\
-                "pythontail.py: error: argument -f/--follow: not allowed with argument -n/--lines"
-
-            # print output message
-            print(output, end='')
-
-            # exit on error
-            sys.exit()
+            
+            # call gracefull exit
+            __exit__()
 
         # set limit lines to zero on follow flag
         args.lines = 0
+
+        # check for None value of sleep
+        if args.sleep is None:
+            args.sleep = 0
 
     else:
         # check for None value of lines 
         if args.lines is None:
             args.lines = 10
+        
+        # check for None value of sleep
+        if args.sleep is not None and args.lines != 0:
+            
+            # call gracefull exit
+            __exit__()
+
+        # check for None value of sleep
+        elif args.sleep is not None and args.lines == 0:
+            args.sleep = 0
     
     # call tail sources function
     run(
         debug=args.debug,
         quiet=args.quiet,
         lines=args.lines,
+        sleep=args.sleep,
         sources=args.sources,
     )
 
 # function to check and tail files
-def run(debug=False, quiet=False, lines=10, sources=[]):
+def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
 
     # normalizing debug variable
     global debug_flag
@@ -448,6 +482,10 @@ def run(debug=False, quiet=False, lines=10, sources=[]):
     # normalizing quiet variable
     global quiet_flag
     quiet_flag = quiet
+
+    # normalizing sleep variable
+    global sleep_time
+    sleep_time = sleep
 
     # standard log folder
     log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
