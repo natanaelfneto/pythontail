@@ -102,7 +102,7 @@ _enjoy_
 ## Usage
 _this messagem can also be found with_ **python pythontail.py -h** _command_
 ```ShellSession
-usage: pythontail.py [-h] [-f | -n LINES] [-d] [-v] sources [sources ...]
+usage: pythontail.py [-h] [-f | -n LINES] [-q] [-s SLEEP] [-d] [-v] sources [sources ...]
 
 Unix tail implementation in python 
 
