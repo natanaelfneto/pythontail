@@ -20,7 +20,7 @@ Version: **0.7**
 ***
 ## Getting Started
 ### Unix version comparison
-#### Unix tail implementation list
+#### Unix tail implementation list (adapted)
 -   item:           `default output line = 10`\
     descrtption:    default output with 10 lines for each tailed file\
     status:         [**OK**]
@@ -28,13 +28,12 @@ Version: **0.7**
     description:    output the last NUM bytes; or use -c +NUM to output starting\
                     with byte NUM of each file\
     status:         [**PENDING**]
--   item:           `-f, --follow[={name|descriptor}]`\
+-   item:           `-f, --follow`\
     description:    output appended data as the file grows;\
-                    an absent option argument means 'descriptor'\
     status:         [**OK**]
--   item:           `-n, --lines=[+]NUM`\
+-   item:           `-n, --lines=NUM`\
     description:    output the last NUM lines, instead of the last 10; or use -n\
-                    +NUM to output starting with line NUM\
+                    <!-- +NUM to output starting with line NUM\ -->
     status:         [**OK**]
 -   item:           `--max-unchanged-stats=N`\
     description:    with --follow=name, reopen a FILE which has not\
@@ -52,9 +51,8 @@ Version: **0.7**
     description:    keep trying to open a file if it is inaccessible\
     status:         [**PENDING**]
 -   item:           `-s, --sleep-interval=N`\
-    description:    with -f, sleep for approximately N seconds (default 1.0)\
-                    between iterations; with inotify and --pid=P, check process P\
-                    at least once every N seconds\
+    description:    with -f, sleep for approximately N seconds (default 0)\
+                    between iterations; at least once every N seconds\
     status:         [**OK**]
 -   item:           `-v, --verbose`\
     description:    always output headers giving file names\
