@@ -151,8 +151,9 @@ log_file_2 = str(Path("{0}/log/fake_2.log".format(os.path.expanduser('~'))))
 
 # tail them
 tail.run(
-    # debug=True,
-    # lines=10
+    # debug=False,
+    # quiet=False,
+    # lines=10,
     sources=[
         log_file_1, 
         log_file_2

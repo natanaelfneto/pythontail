@@ -145,7 +145,12 @@ class GetTail(object):
         for file in files:
             
             # set output message for file output header
-            output = ">>> tailing {0} lines from {1} <<<".format(self.lines, os.path.basename(file))
+            if not quiet_flag:
+                output = ">>> tailing {0} lines from {1} <<<".format(self.lines, os.path.basename(file))
+            else:
+                output = ">>> tailing {0} lines <<<".format(self.lines)
+
+            # print output
             print(output)
 
             # call function to retrieve lines from file
@@ -228,13 +233,28 @@ class PathsValidity(object):
         for file in files:
 
             # append path if it exists, is accessible and is a file
-            if os.access(file, os.F_OK) and os.access(file, os.R_OK) and os.path.isfile(file) :
-                self.logger.debug("Source path {0} was successfully parsed".format(file))
+            if os.access(file, os.F_OK) and os.access(file, os.R_OK) and os.path.isfile(file):
+
+                if not quiet_flag:
+                    output = "Source path {0} was successfully parsed".format(file)
+                else:
+                    output = "A source path was successfully parsed"
+                
+                # log output
+                self.logger.debug(output)
+
+                # append valid file to array
                 valid_files.append(file)
 
             # if not, log the error
             else:
-                self.logger.debug("Source path {0} could not be accessed as a file, therefore will be ignored".format(file))
+                if not quiet_flag:
+                    output = "Source path {0} could not be accessed as a file, therefore will be ignored".format(file)
+                else:
+                    output = "A source path could not be accessed as a file, therefore will be ignored"
+
+                # log output
+                self.logger.debug(output)
         
         # return all parsed valid files
         return valid_files
@@ -243,7 +263,7 @@ class PathsValidity(object):
 class Logger(object):
 
     # path validity init
-    def __init__(self, folder=None, format=None, debug_flag=False, extra=None, verbose_flag=False):
+    def __init__(self, folder=None, format=None, extra=None, debug_flag=False, quiet_flag=False verbose_flag=False):
         ''' 
             Initiate a DICOM Populate Logger instance.
             Argument:
@@ -280,12 +300,21 @@ class Logger(object):
 
         # check if log folder exists
         if not os.path.exists(log['folder']):
-            print("Log folder:",log['folder'],"not found")
+            if not quiet_flag:
+                print("Log folder: {0} not found".format(log['folder']))
+            else:
+                print("Log folder not found")
             try:
                 os.makedirs(log['folder'])
-                print("Log folder:",log['folder'],"created")
+                if not quiet_flag:
+                    print("Log folder: {0} created".format(log['folder']))
+                else:
+                    print("Log folder created")
             except Exception  as e:
-                print("Log folder:",log['folder'],"could not be created, error:", e)
+                if not quiet_flag:
+                    print("Log folder: {0} could not be created, error: {1}".format(log['folder'], e))
+                else:
+                    print("Log folder could not be created.")
                 sys.exit()
 
         # setup of file handler
@@ -304,7 +333,6 @@ class Logger(object):
         logger = logging.LoggerAdapter(logger, log['extra'])
 
         self.adapter = logger
-        self.verbose_flag = verbose_flag
 
 # command line argument parser
 def args(args):
@@ -344,6 +372,15 @@ def args(args):
         type=int,
         help='number of lines to follow in total array of sources', 
         default=None,
+        required=False
+    )
+
+    # quiet flag argument parser
+    parser.add_argument(
+        '-q','--quiet', '--silent',
+        action='store_true', 
+        help='never output headers giving file names',
+        default=False,
         required=False
     )
 
@@ -396,16 +433,21 @@ def args(args):
     # call tail sources function
     run(
         debug=args.debug,
+        quiet=args.quiet,
         lines=args.lines,
         sources=args.sources,
     )
 
 # function to check and tail files
-def run(debug=False, lines=10, sources=[]):
+def run(debug=False, quiet=False, lines=10, sources=[]):
 
-    # normalizing variables
+    # normalizing debug variable
+    global debug_flag
     debug_flag = debug
-    # verbose_flag = verbose
+
+    # normalizing quiet variable
+    global quiet_flag
+    quiet_flag = quiet
 
     # standard log folder
     log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
@@ -435,20 +477,21 @@ def run(debug=False, lines=10, sources=[]):
     logger.adapter.debug('LINES limit number is: {0}'.format(lines))
 
     # log folder location
-    logger.adapter.debug('Log file is being stored at directory: {0}'.format(log_folder))
+    if not quiet_flag:
+        logger.adapter.debug('Log file is being stored at directory: {0}'.format(log_folder))
 
-    # paths to be followed
-    if len(sources) > 1:
+        # paths to be followed
+        if len(sources) > 1:
 
-        # create a fake array for output
-        fake_array = ''
-        for source in sources:
-            fake_array = "{0}\n\t'{1}'".format(fake_array, source)
-        fake_array +='\n]'
+            # create a fake array for output
+            fake_array = ''
+            for source in sources:
+                fake_array = "{0}\n\t'{1}'".format(fake_array, source)
+            fake_array +='\n]'
 
-        logger.adapter.debug('More than one SOURCE was inputed: \nSOURCES = [{0}'.format(fake_array))
-    else:
-        logger.adapter.debug('Only one SOURCE was inputed: {0}'.format(sources))
+            logger.adapter.debug('More than one SOURCE was inputed: \nSOURCES = [{0}'.format(fake_array))
+        else:
+            logger.adapter.debug('Only one SOURCE was inputed: {0}'.format(sources))
 
     # create instance of class and validate files
     valid_files = PathsValidity().validate(sources)
