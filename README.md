@@ -85,12 +85,12 @@ Version: **0.7**
 #### Installation Process
 _install as a module:_
 ```Shell
-pip install tail
+pip install pythontail
 ```
 _and use it as:_
 ```Python
 from pythontail import tail
-tail.files(['dir/log/file.log'])
+tail.run(['dir/log/file.log'])
 ```
 _use as terminal command:_
 ```Shell
@@ -110,6 +110,13 @@ optional arguments:
 -h, --help                  show this help message and exit
 -f, --follow                flag to not limit number of lines tailed
 -n LINES, --lines LINES     number of lines to follow in total array of sources
+
+-q, --quiet, --silent       never output headers giving file names
+
+-s SLEEP, --sleep SLEEP, --sleep-interval SLEEP
+                            with --follow, sleep for approximately N seconds
+                            (default 0) between iterations; least once every N seconds
+
 -d, --debug                 process debug flag
 -v, --version               output software version
 ```
