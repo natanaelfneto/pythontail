@@ -514,8 +514,14 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
     # lines limit number
     logger.adapter.debug('LINES limit number is: {0}'.format(lines))
 
-    # log folder location
+    # sleep time value
+    if lines == 0:
+        logger.adapter.debug('SLEEP time is: {0} seconds'.format(sleep_time))
+
+    # check for quiet flag
     if not quiet_flag:
+
+        # log folder location
         logger.adapter.debug('Log file is being stored at directory: {0}'.format(log_folder))
 
         # paths to be followed
@@ -527,9 +533,12 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
                 fake_array = "{0}\n\t'{1}'".format(fake_array, source)
             fake_array +='\n]'
 
-            logger.adapter.debug('More than one SOURCE was inputed: \nSOURCES = [{0}'.format(fake_array))
+            output = 'More than one SOURCE was inputed: \nSOURCES = [{0}'.format(fake_array)
         else:
-            logger.adapter.debug('Only one SOURCE was inputed: {0}'.format(sources))
+            output = 'Only one SOURCE was inputed: {0}'.format(sources)
+        
+        # log output value
+        logger.adapter.debug(output)
 
     # create instance of class and validate files
     valid_files = PathsValidity().validate(sources)

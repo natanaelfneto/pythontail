@@ -10,8 +10,10 @@ log_file_2 = str(Path("{0}/log/fake_2.log".format(os.path.expanduser('~'))))
 
 # tail them
 tail.run(
-    # debug=True,
-    # lines=10
+    # debug=False,
+    # quiet=False,
+    # lines=10,
+    # sleep=0,
     sources=[
         log_file_1, 
         log_file_2
@@ -19,3 +21,4 @@ tail.run(
 )
 
 # for a --follow atribute, set the maximum number of lines to zero [lines=0]
+# optional --sleep atribute only works with --follow flag, done by making [lines=0]

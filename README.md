@@ -159,6 +159,7 @@ tail.run(
     # debug=False,
     # quiet=False,
     # lines=10,
+    # sleep=0,
     sources=[
         log_file_1, 
         log_file_2
@@ -166,6 +167,7 @@ tail.run(
 )
 
 # for a --follow atribute, set the maximum number of lines to zero [lines=0]
+# optional --sleep atribute only works with --follow flag, done by making [lines=0]
 ```
 Check the output of example1 by running the script file:
 ```Shell
