@@ -104,15 +104,16 @@ _enjoy_
 ## Usage
 _this messagem can also be found with_ **python pythontail.py -h** _command_
 ```ShellSession
-usage: pythontail.py [-h] [-f FOLLOW [FOLLOW ...]] [-d] [-V]
+usage: pythontail.py [-h] [-f | -n LINES] [-d] [-v] sources [sources ...]
 
 Unix tail implementation in python 
 
 optional arguments:
--h, --help                                            show this help message and exit
--f FOLLOW [FOLLOW ...], --follow FOLLOW [FOLLOW ...]  check if filepaths are valid
--d, --debug                                           process debug flag
--V, --version                                         output software version
+-h, --help                  show this help message and exit
+-f, --follow                flag to not limit number of lines tailed
+-n LINES, --lines LINES     number of lines to follow in total array of sources
+-d, --debug                 process debug flag
+-v, --version               output software version
 ```
 ## Examples
 ### First we need a fake log file
@@ -121,10 +122,10 @@ Generate many live fake logs files by running:
 python pythontail/test/fake_log_generator.py <integer> &
 ```
 _for the example1.py, generate the minimum of 2 fake log files_\
-This will create two **fake_n.log** files in _pythontail/log/fake_n.log_ that can be tailed
+This will create two **fake_n.log** files in _~/log/fake_n.log_ that can be tailed
 ### Using it as console command for tail files
 ```
-python pythontail/pythontail.py -f ./pythontail/log/fake_1.log ./pythontail/log/fake_2.log
+python pythontail/pythontail.py -f ~/log/fake_1.log ~/log/fake_2.log
 ```
 ### Using it as python module for tail files
 Create a virtual env and activate it (can be pyenv or virtualenv or any other)
@@ -139,23 +140,26 @@ pip install pythontail
 Create your code as the available in _pythontail/examples/example1.py_\
 ```Python
 from pythontail import tail
+from pathlib import Path
+
 import os
 
-# get as many filepaths you want to be tailed
-log_file_1 = 'dir/log/fake_1.log'))
-log_file_2 = 'dir/log/fake_2.log'))
-...
-log_file_n = 'dir/log/fake_n.log'))
+
+# get as many valid files paths you want to be tailed
+log_file_1 = str(Path("{0}/log/fake_1.log".format(os.path.expanduser('~'))))
+log_file_2 = str(Path("{0}/log/fake_2.log".format(os.path.expanduser('~'))))
 
 # tail them
-tail.files(
-    debug=True,
-    lines=[15],
-    paths=[
+tail.run(
+    # debug=True,
+    # lines=10
+    sources=[
         log_file_1, 
         log_file_2
     ]
 )
+
+# for a --follow atribute, set the maximum number of lines to zero [lines=0]
 ```
 Check the output of example1 by running the script file:
 ```Shell

@@ -224,17 +224,17 @@ class PathsValidity(object):
         valid_files = []
 
         # loop check through parsed path
-        self.logger.debug('checking validity of parsed files')
+        self.logger.debug('checking validity of inputed sources')
         for file in files:
 
             # append path if it exists, is accessible and is a file
             if os.access(file, os.F_OK) and os.access(file, os.R_OK) and os.path.isfile(file) :
-                self.logger.debug("Path %s is successfully parsed", file)
+                self.logger.debug("Source path {0} was successfully parsed".format(file))
                 valid_files.append(file)
 
             # if not, log the error
             else:
-                self.logger.debug("Path {0} could not be accessed as a file, therefore will be ignored".format(file))
+                self.logger.debug("Source path {0} could not be accessed as a file, therefore will be ignored".format(file))
         
         # return all parsed valid files
         return valid_files
@@ -342,7 +342,7 @@ def args(args):
     group.add_argument(
         '-n','--lines',
         type=int,
-        help='number of lines to follow in total array of files', 
+        help='number of lines to follow in total array of sources', 
         default=None,
         required=False
     )
@@ -435,7 +435,7 @@ def run(debug=False, lines=10, sources=[]):
     logger.adapter.debug('LINES limit number is: {0}'.format(lines))
 
     # log folder location
-    logger.adapter.debug('Log folder is being stored at: {0}'.format(log_folder))
+    logger.adapter.debug('Log file is being stored at directory: {0}'.format(log_folder))
 
     # paths to be followed
     if len(sources) > 1:
@@ -446,9 +446,9 @@ def run(debug=False, lines=10, sources=[]):
             fake_array = "{0}\n\t'{1}'".format(fake_array, source)
         fake_array +='\n]'
 
-        logger.adapter.debug('More than one SOURCE was passed: \nSOURCES = [{0}'.format(fake_array))
+        logger.adapter.debug('More than one SOURCE was inputed: \nSOURCES = [{0}'.format(fake_array))
     else:
-        logger.adapter.debug('Only one SOURCE was passed: {0}'.format(sources))
+        logger.adapter.debug('Only one SOURCE was inputed: {0}'.format(sources))
 
     # create instance of class and validate files
     valid_files = PathsValidity().validate(sources)

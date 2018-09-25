@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
-from pythontail import pythontail as module
+import os
 import re
 import setuptools
+
+from pythontail import pythontail as module
 
 
 # project long description
