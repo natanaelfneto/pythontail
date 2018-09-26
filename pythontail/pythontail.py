@@ -137,7 +137,10 @@ class GetTail(object):
                 pass    
 
     # function for tail lines from files
-    def tail(self, files):
+    def tail(self, sources):
+
+        # get files from sources
+        files = sources['files']
 
         # add line break for file output lines
         print("\n", end='\r')
@@ -174,7 +177,10 @@ class GetTail(object):
             print('\n', end='\r')
 
     # function to tail follow files
-    def follow(self, files):
+    def follow(self, sources):
+
+        # get files from sources
+        files = sources['files']
 
         last_line = {}
         # set las line variable
@@ -190,18 +196,19 @@ class GetTail(object):
                     # get last line
                     updated_last_line = self.getlastline(file).decode()
 
+                    # do not update if the saved last line is identical to new retrieved line or if its None
+                    if last_line[index] != updated_last_line and updated_last_line is not None:
+                        print(updated_last_line, end='\r')
+                        last_line[index] = updated_last_line
+
+                        # sleep time between line retrieves
+                        if sleep_time:
+                            time.sleep(sleep_time)
+
                 # get keyboard interruption for a gracefull system exit
-                except KeyboardInterrupt as e:
+                except KeyboardInterrupt:
                     self.logger.info("tail was interrupted by the user")
                     sys.exit()
-
-                # do not update if the saved last line is identical to new retrieved line or if its None
-                if last_line[index] != updated_last_line and updated_last_line is not None:
-                    print(updated_last_line, end='\r')
-                    last_line[index] = updated_last_line
-
-                    if sleep_time:
-                        time.sleep(sleep_time)
 
     #  exit function for class basic routine
     def __exit__(self, exc_type, exc_value, traceback):
@@ -233,7 +240,7 @@ class PathsValidity(object):
         valid_files = []
 
         # loop check through parsed path
-        self.logger.debug('checking validity of inputed sources')
+        self.logger.debug('Checking validity of inputed sources')
         for file in files:
 
             # append path if it exists, is accessible and is a file
@@ -253,9 +260,9 @@ class PathsValidity(object):
             # if not, log the error
             else:
                 if not quiet_flag:
-                    output = "Source path {0} could not be accessed as a file, therefore will be ignored".format(file)
+                    output = "Source path {0} could not be accessed as a file".format(file)
                 else:
-                    output = "A source path could not be accessed as a file, therefore will be ignored"
+                    output = "A source path could not be accessed as a file"
 
                 # log output
                 self.logger.debug(output)
@@ -338,13 +345,14 @@ class Logger(object):
 
         self.adapter = logger
 
-def __exit__():
+def __exit__(output):
     '''
+        Argument Parser custom error handler
     '''
     # set output message
     output = "" +\
-        "usage: pythontail.py [-h] [-f | -n LINES] [-d] [-v] sources [sources ...]\n" +\
-        "pythontail.py: error: argument -f/--follow: not allowed with argument -n/--lines"
+        "usage: pythontail.py [-h] [-f | -n LINES] [-q] [-s SLEEP] [-d] [-v] sources [sources ...]\n" +\
+        output
 
     # print output message
     print(output, end='')
@@ -431,37 +439,26 @@ def args(args):
 
     # passing filtered arguments as array
     args = parser.parse_args(args)
-    
-    # set limit of lines to zero with follow flag
-    if args.follow:
 
-        # check for known exception
+    # check follow flag
+    if args.follow == True:
+
+        # check lines value
         if args.lines is not None:
-            
-            # call gracefull exit
-            __exit__()
+            output = "pythontail.py: error: argument -f/--follow: not allowed with argument -n/--lines"
+            __exit__(output)
 
-        # set limit lines to zero on follow flag
-        args.lines = 0
-
-        # check for None value of sleep
+        # check sleep value
         if args.sleep is None:
             args.sleep = 0
-
-    else:
-        # check for None value of lines 
-        if args.lines is None:
-            args.lines = 10
         
-        # check for None value of sleep
-        if args.sleep is not None and args.lines != 0:
-            
-            # call gracefull exit
-            __exit__()
+        # set lines to zero on follow flag
+        args.lines = 0
 
-        # check for None value of sleep
-        elif args.sleep is not None and args.lines == 0:
-            args.sleep = 0
+    # check for incompatible arguments
+    elif args.follow == False and args.lines != 0 and args.sleep is not None:
+        output = "pythontail.py: error: argument -n/--lines: not allowed with argument -s/--sleep/--sleep-interval"
+        __exit__(output)
     
     # call tail sources function
     run(
@@ -548,11 +545,16 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
         logger.adapter.error('No paths were successfully parsed. Exiting...')
         sys.exit()
 
+    # combine valid files and vallid process
+    valid_sources = {
+        'files': valid_files,
+    }
+
     if lines != 0:
         with GetTail(lines=lines) as get:
-            get.tail(files=valid_files)
+            get.tail(sources=valid_sources)
     else:
-        GetTail().follow(files=valid_files)
+        GetTail().follow(sources=valid_sources)
 
 # run function on command call
 if __name__ == "__main__":

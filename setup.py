@@ -7,13 +7,10 @@ import setuptools
 
 from pythontail import pythontail as module
 
-
 # project long description
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(BASE_PATH, 'README.md'), "r") as file:
     long_description = file.read()
-
-install_requires = []
 
 setuptools.setup(
     name=module.__project__,
@@ -29,6 +26,5 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-    ],
-    install_requires=install_requires
+    ]
 )
