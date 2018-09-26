@@ -31,25 +31,43 @@ short_description = "a unix tail implementation in python"
 import argparse
 import getpass
 import logging
-import mmap
 import os
 import sys
 import time
 
-# main class
-class PythonTail(object):
 
-    # pythontail init
-    def __init__(self, logger):
+# main class
+class GetTail(object):
+
+    # gettail init
+    def __init__(self, lines=0):
         '''
-            Initiate a PythonTail instance
+            Initiate a GetTail instance
         '''
 
         # get loggert on a self instance
-        self.logger = logger
+        self.logger = logger.adapter
 
-    # function to mmap file and get last line without buffering all data into memory
-    def getlastline(self, file):
+        # set desired number of lines
+        self.lines = lines
+
+        # set output index string length
+        self.line_pad = len(str(self.lines))
+    
+    # enter function for class basic rotine
+    def __enter__(self):
+        '''
+            Function for entering class with python 3 standards of
+            'with' parameter and a following __exit__ function for
+            a cleanner use of the class instancies
+        '''
+        try:
+            return self
+        except StopIteration:
+           raise RuntimeError("Instance could not be returned")
+
+    # function to seek file and get last N lines without buffering all data into memory
+    def getlines(self, file, lines):
         '''
             Function to keep getting last line of a file as it updates
 
@@ -57,11 +75,51 @@ class PythonTail(object):
                 file: file to be tailed
         '''
 
-        # open parsed file to be tailed
+        # array of found lines 
+        lineset = []
+
+        # block counter will be multiplied by buffer to get the block size from the end
+        block_counter = -1
+
+        # buffer memory (if file too small it will trigger an expected I/O Error)
+        buffer=4098
+
+        # use file as variable with read bytes
+        with open(file, 'rb') as f:
+
+            # keep loop until the array of founded lines match desired number of lines
+            while len(lineset) < lines:
+
+                # attempt to seek line block from file end
+                try:
+                    f.seek(block_counter * buffer, os.SEEK_END)
+
+                # either file is too small, or too many lines requested
+                except IOError: 
+
+                    # error handler
+                    f.seek(0)
+                    lineset = f.readlines()
+                    break
+
+                # update lineset
+                lineset = f.readlines()
+
+                # update block counter
+                block_counter = block_counter - 1
+
+            # return lineset array
+            return lineset[-lines:]
+
+    # function to get seek live file and get last line without buffering all data into memory
+    def getlastline(self, file):
+
+        # use file as variable with read bytes
         with open(file, 'rb') as f:
 
             # trying to get end of file on memory
             try:
+
                 # seek_end file
                 f.seek(-2, os.SEEK_END)
 
@@ -72,69 +130,104 @@ class PythonTail(object):
                     f.seek(-2, os.SEEK_CUR)
 
                 # return obtained line decoded
-                return f.readline().decode()
+                return f.readline()
 
             # if an IOError occurr, just pass
             except IOError:
                 pass    
 
-    # function to tail follow all parsed paths
-    def follow(self, lines, files):
-        '''
-            Function to get all parsed paths and call the getlasfile() function
-            to each one at a time and merge in the standard output
+    # function for tail lines from files
+    def tail(self, sources):
 
-            Arguments:
-                paths: array of files to be tailed
-        '''
+        # get files from sources
+        files = sources['files']
 
-        # check if validate paths remained
-        if not len(files) > 0:
-            self.logger.error('No paths were successfully parsed. Exiting...')
-            sys.exit()
+        # add line break for file output lines
+        print("\n", end='\r')
 
-        # still no last line
-        last_line = ''
+        # file loop
+        for file in files:
+            
+            # set output message for file output header
+            if not quiet_flag:
+                output = ">>> tailing {0} lines from {1} <<<".format(self.lines, os.path.basename(file))
+            else:
+                output = ">>> tailing {0} lines <<<".format(self.lines)
 
-        # start line counter
-        lines_counter = 0
+            # print output
+            print(output)
 
-        # loop until user ends process
+            # call function to retrieve lines from file
+            retrieved_lines = self.getlines(file, self.lines)
+
+            # output lines founded
+            for index, line in enumerate(retrieved_lines):
+
+                # set output message
+                output = "{0:0{1}d}: {2}".format(
+                    (self.lines - index),   # index of lines requested
+                    self.line_pad,          # add a left padding zeros
+                    line.decode()           # decode line form b''
+                )
+
+                # print output
+                print(output, end='\r')
+            
+            # print line break at the end of file loop
+            print('\n', end='\r')
+
+    # function to tail follow files
+    def follow(self, sources):
+
+        # get files from sources
+        files = sources['files']
+
+        last_line = {}
+        # set las line variable
+        for index, file in enumerate(files):
+            last_line[index] = None
+
+        # for an infinite tail of file
         while True:
 
-            # break when line counter achieve lines value
-            if lines_counter == lines and lines != 0:
-                break
+            # loop files
+            for index, file in enumerate(files):
+                try:
+                    # get last line
+                    updated_last_line = self.getlastline(file).decode()
 
-            # line vounter incremental
-            lines_counter = lines_counter + 1
+                    # do not update if the saved last line is identical to new retrieved line or if its None
+                    if last_line[index] != updated_last_line and updated_last_line is not None:
+                        print(updated_last_line, end='\r')
+                        last_line[index] = updated_last_line
 
-            # loop trhough parsed files paths
-            for file in files:
+                        # sleep time between line retrieves
+                        if sleep_time:
+                            time.sleep(sleep_time)
 
-                # do not update if the saved last line is identical to new retrieved line or if its None
-                if last_line != self.getlastline(file) and self.getlastline(file) is not None:
+                # get keyboard interruption for a gracefull system exit
+                except KeyboardInterrupt:
+                    self.logger.info("tail was interrupted by the user")
+                    sys.exit()
 
-                    # update last line variable
-                    last_line = self.getlastline(file)
-
-                    # output retrieve las line
-                    print(last_line, end='\r')
+    #  exit function for class basic routine
+    def __exit__(self, exc_type, exc_value, traceback):
+        pass
 
 # paths argument parser
 class PathsValidity(object):
 
     # path validity init
-    def __init__(self, logger):
+    def __init__(self):
         ''' 
             Initiate a PythonTail Path Validity instance.
         '''
 
         # get loggert on a self instance
-        self.logger = logger
+        self.logger = logger.adapter
         
     # path validity checker function
-    def checker(self, files):
+    def validate(self, files):
         '''
             Function to check if each parsed path is a valid system file
             and if it can be accessed by the code.
@@ -147,121 +240,182 @@ class PathsValidity(object):
         valid_files = []
 
         # loop check through parsed path
-        self.logger.debug('checking validity of parsed files')
+        self.logger.debug('Checking validity of inputed sources')
         for file in files:
 
             # append path if it exists, is accessible and is a file
-            if os.access(file, os.F_OK) and os.access(file, os.R_OK) and os.path.isfile(file) :
-                self.logger.debug("Path %s is successfully parsed", file)
+            if os.access(file, os.F_OK) and os.access(file, os.R_OK) and os.path.isfile(file):
+
+                if not quiet_flag:
+                    output = "Source path {0} was successfully parsed".format(file)
+                else:
+                    output = "A source path was successfully parsed"
+                
+                # log output
+                self.logger.debug(output)
+
+                # append valid file to array
                 valid_files.append(file)
 
             # if not, log the error
             else:
-                self.logger.debug( \
-                    "Path '%s' could not be found or does not have read permitions or it is not a file, \
-                    therefore will be ignored", file
-                    )
+                if not quiet_flag:
+                    output = "Source path {0} could not be accessed as a file".format(file)
+                else:
+                    output = "A source path could not be accessed as a file"
+
+                # log output
+                self.logger.debug(output)
         
         # return all parsed valid files
         return valid_files
 
-# logger configuration function
-def logger_config(debug=False):
+# class for logger instancies and configurations
+class Logger(object):
 
-    # setup of log folder
-    log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
+    # path validity init
+    def __init__(self, folder=None, format=None, extra=None, debug_flag=False, quiet_flag=False, verbose_flag=False):
+        ''' 
+            Initiate a DICOM Populate Logger instance.
+            Argument:
+                logger: a logging instance for output and log
+        '''
 
-    # set logging basic config variables
-    log_level = 'INFO'
-    log_date_format = '%Y-%m-%d %H:%M:%S'
-    log_format = '%(asctime)s %(project)s-%(version)s --%(levelname)s-- user: %(user)s LOG: %(message)s'
-    log_file = log_folder+'/'+__project__+'.log'
+        # 
+        log = {
+            # setup of log folder
+            'folder': folder,
+            # set logging basic config variables
+            'level': 'INFO',
+            # 
+            'date_format': '%Y-%m-%d %H:%M:%S',
+            # 
+            'filepath': folder+'/'+__project__+'.log',
+            #
+            'format': format,
+            # extra data into log formatter
+            'extra': extra
+        }
 
-    # extra data into log formatter
-    extra = {
-        'project':  __project__,
-        'version':  __version__,
-        'user':     getpass.getuser()
-    }
+        # set log name
+        logger = logging.getLogger(__project__+'-'+__version__)
 
-    # set formatter
-    log_formatter = logging.Formatter(log_format)
+        # set formatter
+        formatter = logging.Formatter(log['format'])
 
-    # set logger name
-    logger_name = __project__+'-'+__version__
+        # check debug flag
+        if debug_flag:
+            logger.setLevel('DEBUG')
+        else:
+            logger.setLevel('INFO')
 
-    # check debug flag
-    if debug:
-        log_level = 'DEBUG'
-    else:
-        log_level = 'ERROR'
+        # check if log folder exists
+        if not os.path.exists(log['folder']):
+            if not quiet_flag:
+                print("Log folder: {0} not found".format(log['folder']))
+            else:
+                print("Log folder not found")
+            try:
+                os.makedirs(log['folder'])
+                if not quiet_flag:
+                    print("Log folder: {0} created".format(log['folder']))
+                else:
+                    print("Log folder created")
+            except Exception  as e:
+                if not quiet_flag:
+                    print("Log folder: {0} could not be created, error: {1}".format(log['folder'], e))
+                else:
+                    print("Log folder could not be created.")
+                sys.exit()
 
-    # check if log folder exists
-    if not os.path.exists(log_folder):
-        print("Log folder:",log_folder,"not found")
-        try:
-            os.makedirs(log_folder)
-            print("Log folder:",log_folder,"created")
-        except Exception  as e:
-            print("Log folder:",Log_folder,"could not be created, error:", e)
+        # setup of file handler
+        file_handler = logging.FileHandler(log['filepath'])     
+        file_handler.setFormatter(formatter)
 
-     # setup of handlers
-    handler = logging.FileHandler(log_file)        
-    handler.setFormatter(log_formatter)
+        # setup of stream handler
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
 
-    # setup of loggers
-    logger = logging.getLogger(logger_name)
-    logger.setLevel(log_level)
-    logger.addHandler(handler)
+        # add handler to the logger
+        logger.addHandler(file_handler)
+        logger.addHandler(stream_handler)
 
-    # update logger to receive formatter within extra data
-    logger = logging.LoggerAdapter(logger, extra)
+        # update logger to receive formatter within extra data
+        logger = logging.LoggerAdapter(logger, log['extra'])
 
-    # parsinf logging basic config
-    logging.basicConfig(
-        level=getattr(logging,log_level),
-        format=log_format,
-        datefmt=log_date_format,
-        filemode='w+'
-    )
+        self.adapter = logger
 
-    # return configured logger instance
-    return logger
+def __exit__(output):
+    '''
+        Argument Parser custom error handler
+    '''
+    # set output message
+    output = "" +\
+        "usage: pythontail.py [-h] [-f | -n LINES] [-q] [-s SLEEP] [-d] [-v] sources [sources ...]\n" +\
+        output
+
+    # print output message
+    print(output, end='')
+
+    # exit on error
+    sys.exit()
 
 # command line argument parser
 def args(args):
+    '''
+        Main function for terminal call of library
+        Arguments:
+            args: receive all passed arguments and filter them using
+                the argparser library
+    '''
 
     # argparser init
-    parser = argparse.ArgumentParser(
-        description=short_description
-    )
+    parser = argparse.ArgumentParser(description=short_description)
 
     # prevent follow and lines flag to be setted at the same time
     group = parser.add_mutually_exclusive_group(required=False)
 
     # files with limited lines
     parser.add_argument(
-        'files',
+        'sources',
         nargs='+',
-        help='dicom folders or files paths', 
+        help='sources to be tailed', 
         default=[]
-    )
-
-    # number of lines to limit tail
-    group.add_argument(
-        '-n','--lines',
-        nargs='+',
-        type=int,
-        help='number of lines to follow in total array of files', 
-        default=[10],
-        required=False
     )
 
     # path argument parser
     group.add_argument(
         '-f','--follow',
+        action='store_true',
         help='flag to not limit number of lines tailed', 
         default=False,
+        required=False
+    )
+
+    # number of lines to limit tail
+    group.add_argument(
+        '-n','--lines',
+        type=int,
+        help='number of lines to follow in total array of sources', 
+        default=None,
+        required=False
+    )
+
+    # quiet flag argument parser
+    parser.add_argument(
+        '-q','--quiet', '--silent',
+        action='store_true', 
+        help='never output headers giving file names',
+        default=False,
+        required=False
+    )
+
+    # sleep interval input
+    parser.add_argument(
+        '-s','--sleep', '--sleep-interval',
+        type=int, 
+        help='with --follow, sleep for approximately N seconds (default 0) between iterations; least once every N seconds',
+        default=None,
         required=False
     )
 
@@ -277,7 +431,7 @@ def args(args):
     # version output argument parser
     parser.add_argument(
         '-v','--version',
-        action='version', 
+        action='version',
         help='output software version',
         default=False,
         version=(__project__+"-"+__version__)
@@ -285,44 +439,122 @@ def args(args):
 
     # passing filtered arguments as array
     args = parser.parse_args(args)
-    
-    # if any file being parsed
-    if args.files:
 
-        # set limit of lines to zero with follow flag
-        if args.follow:
-            lines = [0]
+    # check follow flag
+    if args.follow == True:
+
+        # check lines value
+        if args.lines is not None:
+            output = "pythontail.py: error: argument -f/--follow: not allowed with argument -n/--lines"
+            __exit__(output)
+
+        # check sleep value
+        if args.sleep is None:
+            args.sleep = 0
         
-        # check and tail files
-        files(args.debug, args.lines[0], args.files)
+        # set lines to zero on follow flag
+        args.lines = 0
 
-    # else no path was pass within the option
-    else:
-        logger.error('No option or argument was passed. Please try again\n')
-        parser.print_help()
+    # check for incompatible arguments
+    elif args.follow == False and args.lines != 0 and args.sleep is not None:
+        output = "pythontail.py: error: argument -n/--lines: not allowed with argument -s/--sleep/--sleep-interval"
+        __exit__(output)
+    
+    # call tail sources function
+    run(
+        debug=args.debug,
+        quiet=args.quiet,
+        lines=args.lines,
+        sleep=args.sleep,
+        sources=args.sources,
+    )
 
 # function to check and tail files
-def files(debug=False, lines=[10], files=[]):
+def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
 
-    # call logger configuration function
-    logger = logger_config(debug)
+    # normalizing debug variable
+    global debug_flag
+    debug_flag = debug
 
-    # log variables
-    logger.debug('DEBUG flags was setted as: %s', debug)
-    logger.debug('LINES limit is: %s', lines)
-    logger.debug('PATHS was parsed as an array: %s', files)
+    # normalizing quiet variable
+    global quiet_flag
+    quiet_flag = quiet
 
-    # create instance of class
-    paths = PathsValidity(logger)
+    # normalizing sleep variable
+    global sleep_time
+    sleep_time = sleep
 
-    # check each parsed path of file
-    files = paths.checker(files)
-    
-    # create instance of class
-    pythontail = PythonTail(logger)
+    # standard log folder
+    log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
 
-    # tail each parsed path of file
-    pythontail.follow(lines, files)
+    # standard log format
+    log_format = '%(asctime)-8s %(levelname)-5s [%(project)s-%(version)s] user: %(user)s LOG: %(message)s'
+
+    # creates a logger instance from class Logger within:
+    # an adapter (the logging library Logger Adapter) and the verbose flag
+    global logger
+    logger = Logger(
+        folder = log_folder,
+        format = log_format,
+        debug_flag = debug_flag,
+        extra = {
+            'project':  __project__,
+            'version':  __version__,
+            'user':     getpass.getuser()
+        },
+        # verbose_flag = verbose_flag
+    )
+
+    # debug flag variable
+    logger.adapter.debug('DEBUG flags was setted as: {0}'.format(debug))
+
+    # lines limit number
+    logger.adapter.debug('LINES limit number is: {0}'.format(lines))
+
+    # sleep time value
+    if lines == 0:
+        logger.adapter.debug('SLEEP time is: {0} seconds'.format(sleep_time))
+
+    # check for quiet flag
+    if not quiet_flag:
+
+        # log folder location
+        logger.adapter.debug('Log file is being stored at directory: {0}'.format(log_folder))
+
+        # paths to be followed
+        if len(sources) > 1:
+
+            # create a fake array for output
+            fake_array = ''
+            for source in sources:
+                fake_array = "{0}\n\t'{1}'".format(fake_array, source)
+            fake_array +='\n]'
+
+            output = 'More than one SOURCE was inputed: \nSOURCES = [{0}'.format(fake_array)
+        else:
+            output = 'Only one SOURCE was inputed: {0}'.format(sources)
+        
+        # log output value
+        logger.adapter.debug(output)
+
+    # create instance of class and validate files
+    valid_files = PathsValidity().validate(sources)
+
+    # check if validate paths remained
+    if not len(valid_files) > 0:
+        logger.adapter.error('No paths were successfully parsed. Exiting...')
+        sys.exit()
+
+    # combine valid files and vallid process
+    valid_sources = {
+        'files': valid_files,
+    }
+
+    if lines != 0:
+        with GetTail(lines=lines) as get:
+            get.tail(sources=valid_sources)
+    else:
+        GetTail().follow(sources=valid_sources)
 
 # run function on command call
 if __name__ == "__main__":

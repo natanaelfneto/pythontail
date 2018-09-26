@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Released]
 
+### 0.7 - 2018-09-22
+### Added
+- logging handler configurations class and global variable
+- faker log generator inside tests now print instance and line
+- quiet input option [-q, --quiet, --silent] flag parameter to remove source heads from tailing process
+- sleep interval time input [-s, --sleep, --sleep-interval] that accespts integer values for sleep in seconds between output updates of --follow flag
+
+### Changed
+- class PythonTail is now GetTail
+- from unique function to separated functions for tail N lines from files and for follow live file
+- logging basic config to handlers for file and stream outputs
+- main function name from files to run for future standards in use with PID and remote sources tailing
+- rename files/paths to sources for future standards in use with PID and remote sources tailing
+
 ### 0.6 - 2018-09-11
 #### Added
 - added example folder with basic use of pythontail for multiple files

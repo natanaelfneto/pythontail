@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
+
 # third party imports
 import logging
 import getpass
@@ -7,8 +8,31 @@ import time
 import os
 import sys
 
+from pathlib import Path
+
+
 # get project log folder
-fake_log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
+fake_log_folder = None
+
+# trying to parse local user folder as a valid output log folder
+try:
+
+    # get logged user path
+    userdir = os.path.expanduser('~')
+
+    # add a log subfolder folder
+    temp_folder = "{0}/log/".format(userdir)
+
+    # parse it as a valid path
+    temp_folder = Path(temp_folder)
+
+    # stringfy path instance
+    fake_log_folder = str(temp_folder)
+
+# if any exception found, exit
+except Exception as e:
+    print("Fake log folder: {0} could not be created".format(fake_log_folder))
+    sys.exit()
 
 # setup function
 def setup(i):
@@ -21,12 +45,12 @@ def setup(i):
 
     # check if log folder exists
     if not os.path.exists(fake_log_folder):
-        print("Fake log folder:",fake_log_folder,"not found")
+        print("Fake log folder: {0} not found".format(fake_log_folder))
         try:
             os.makedirs(fake_log_folder)
-            print("Fake log folder:",fake_log_folder,"created")
+            print("Fake log folder: {0} created".format(fake_log_folder))
         except Exception  as e:
-            print("Fake log folder:",fake_log_folder,"could not be created, error:", e)
+            print("Fake log folder: {0} could not be created, error: {1}".format(fake_log_folder, e))
 
     # setup of handlers
     handler = logging.FileHandler(fake_log_file)        
@@ -38,13 +62,13 @@ def setup(i):
     logger.addHandler(handler)
 
     # first log message inside log file
-    logger.info("Fake log %s configuration is done", str(i))
+    logger.info("Fake log {0} configuration is done".format(str(i)))
 
     # check if log file exists
     if os.path.exists(fake_log_file):
-        logger.info("Fake log file: %s already exist.",fake_log_file)
+        logger.info("Fake log file: {0} already exist.".format(fake_log_file))
     else:
-        logger.info("Fake log file will be created at: %s",fake_log_file)
+        logger.info("Fake log file will be created at: {0}".format(fake_log_file))
     
     return logger
 
@@ -52,20 +76,35 @@ def setup(i):
 def loop(logger):
 
     # setting up the output message
-    output_message = str(getpass.getuser())+' Fake log file output!'
+    output_message = "{0} Fake log file output!".format(str(getpass.getuser()))
+
+    # iteration variable start value
+    iteration = 0
 
     # get a while loop to populate the fake log file
     while True:
-        # write log for each file instance
-        for i in logger:
-            # log output message in especific logger
-            logger[i].info(output_message+' instance %s',str(i))
-            # wait before writing a new line
-            time.sleep(2)
+
+        try:
+            # iteration incrementer
+            iteration = iteration + 1
+
+            # write log for each file instance
+            for i in logger:
+
+                # log output message in especific logger
+                logger[i].info("{0}, instance {1}, iteration {2}".format(output_message, str(i), str(iteration)))
+
+                # wait before writing a new line
+                time.sleep(2)
+        except KeyboardInterrupt:
+            logger[i].error("All processes were interrupted by the user")
+            sys.exit()
 
 if __name__ == "__main__":
+
     # get all args
     args = sys.argv[1:]
+
     try:
         # parse args for integers or emprty
         if not args or int(args[0]) == 0:
@@ -73,7 +112,8 @@ if __name__ == "__main__":
         else:
             log_instances = int(args[0])
     except Exception as e:
-        raise ValueError('You must pass a valid number of log instances or leave ir blank for single instance')
+        print('You must pass a valid number of log instances or leave ir blank for single instance')
+        sys.exit()
 
     # set loggin config values
     fake_log_level = 'INFO'
@@ -88,11 +128,15 @@ if __name__ == "__main__":
         filemode='w+'
         )
         
+    # create logger variable
     logger = {}
+
     # loop for many log instances
     for i in range(log_instances):
         # call setup function
         logger[i+1] = setup(i+1)
+
     # call logger function
     loop(logger)
+
 # end of code

@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from pythontail import pythontail as module
+
+import os
 import re
 import setuptools
 
+from pythontail import pythontail as module
+
 # project long description
-with open("README.md", "r") as file:
+BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(BASE_PATH, 'README.md'), "r") as file:
     long_description = file.read()
 
 setuptools.setup(
@@ -22,5 +26,5 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-    ],
+    ]
 )
