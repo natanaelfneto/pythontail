@@ -46,7 +46,7 @@ class GetTail(object):
         '''
 
         # get loggert on a self instance
-        self.logger = logger.adapter
+        self.logger = logger
 
         # set desired number of lines
         self.lines = lines
@@ -224,7 +224,7 @@ class PathsValidity(object):
         '''
 
         # get loggert on a self instance
-        self.logger = logger.adapter
+        self.logger = logger
         
     # path validity checker function
     def validate(self, files):
@@ -343,7 +343,9 @@ class Logger(object):
         # update logger to receive formatter within extra data
         logger = logging.LoggerAdapter(logger, log['extra'])
 
-        self.adapter = logger
+        self.debug = logger.debug
+        self.info = logger.info
+        self.error = logger.error
 
 def __exit__(output):
     '''
@@ -506,20 +508,20 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
     )
 
     # debug flag variable
-    logger.adapter.debug('DEBUG flags was setted as: {0}'.format(debug))
+    logger.debug('DEBUG flags was setted as: {0}'.format(debug))
 
     # lines limit number
-    logger.adapter.debug('LINES limit number is: {0}'.format(lines))
+    logger.debug('LINES limit number is: {0}'.format(lines))
 
     # sleep time value
     if lines == 0:
-        logger.adapter.debug('SLEEP time is: {0} seconds'.format(sleep_time))
+        logger.debug('SLEEP time is: {0} seconds'.format(sleep_time))
 
     # check for quiet flag
     if not quiet_flag:
 
         # log folder location
-        logger.adapter.debug('Log file is being stored at directory: {0}'.format(log_folder))
+        logger.debug('Log file is being stored at directory: {0}'.format(log_folder))
 
         # paths to be followed
         if len(sources) > 1:
@@ -535,14 +537,14 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
             output = 'Only one SOURCE was inputed: {0}'.format(sources)
         
         # log output value
-        logger.adapter.debug(output)
+        logger.debug(output)
 
     # create instance of class and validate files
     valid_files = PathsValidity().validate(sources)
 
     # check if validate paths remained
     if not len(valid_files) > 0:
-        logger.adapter.error('No paths were successfully parsed. Exiting...')
+        logger.error('No paths were successfully parsed. Exiting...')
         sys.exit()
 
     # combine valid files and vallid process
