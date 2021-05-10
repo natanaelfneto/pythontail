@@ -36,6 +36,9 @@ import sys
 import time
 
 
+LOGGING_FILE_ENABLE = True
+
+
 # main class
 class GetTail(object):
 
@@ -484,8 +487,11 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
     global sleep_time
     sleep_time = sleep
 
-    # standard log folder
-    log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
+    if LOGGING_FILE_ENABLE:
+        # standard log folder
+        log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
+    else:
+        log_folder = None
 
     # standard log format
     log_format = '%(asctime)-8s %(levelname)-5s [%(project)s-%(version)s] user: %(user)s LOG: %(message)s'
