@@ -289,8 +289,6 @@ class Logger(object):
             'level': 'INFO',
             # 
             'date_format': '%Y-%m-%d %H:%M:%S',
-            # 
-            'filepath': folder+'/'+__project__+'.log',
             #
             'format': format,
             # extra data into log formatter
@@ -310,7 +308,7 @@ class Logger(object):
             logger.setLevel('INFO')
 
         # check if log folder exists
-        if not os.path.exists(log['folder']):
+        if log['folder'] is not None and not os.path.exists(log['folder']):
             if not quiet_flag:
                 print("Log folder: {0} not found".format(log['folder']))
             else:
@@ -329,15 +327,15 @@ class Logger(object):
                 sys.exit()
 
         # setup of file handler
-        file_handler = logging.FileHandler(log['filepath'])     
-        file_handler.setFormatter(formatter)
+        if log['folder'] is not None:
+            filepath = folder+'/'+__project__+'.log'
+            file_handler = logging.FileHandler(filepath)
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
 
         # setup of stream handler
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
-
-        # add handler to the logger
-        logger.addHandler(file_handler)
         logger.addHandler(stream_handler)
 
         # update logger to receive formatter within extra data
