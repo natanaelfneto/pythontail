@@ -4,7 +4,7 @@
 __project__ = "pythontail"
 
 # project version
-__version__ = "0.6"
+__version__ = "0.8"
 
 # prohect author
 __author__ = "natanaelfneto"

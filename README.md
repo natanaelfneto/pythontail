@@ -8,7 +8,7 @@
 </p>
 
 **PythonTail**: a Unix tail implementation in python.
-Version: **0.7**
+Version: **0.8**
 ***
 # Table of Contents
 * [Getting Started](#getting-started)
