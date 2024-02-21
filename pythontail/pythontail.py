@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 # project name
 __project__ = "pythontail"
@@ -365,8 +364,8 @@ def args(args):
     '''
         Main function for terminal call of library
         Arguments:
-            args: receive all passed arguments and filter them using
-                the argparser library
+          args: receive all passed arguments and filter them using
+          the argparser library
     '''
 
     # argparser init
