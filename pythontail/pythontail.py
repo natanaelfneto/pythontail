@@ -84,7 +84,7 @@ class GetTail(object):
         buffer=4098
 
         # use file as variable with read bytes
-        with open(file, 'rb') as f:
+        with open(file, "rb") as f:
 
             # keep loop until the array of founded lines match desired number of lines
             while len(lineset) < lines:
@@ -114,7 +114,7 @@ class GetTail(object):
     def getlastline(self, file):
 
         # use file as variable with read bytes
-        with open(file, 'rb') as f:
+        with open(file, "rb") as f:
 
             # trying to get end of file on memory
             try:
@@ -123,7 +123,7 @@ class GetTail(object):
                 f.seek(-2, os.SEEK_END)
 
                 # walk on file data ultil it reaches a line breaker
-                while f.read(1) != b'\n':
+                while f.read(1) != b"\n":
 
                     # seek_cur file
                     f.seek(-2, os.SEEK_CUR)
@@ -139,19 +139,16 @@ class GetTail(object):
     def tail(self, sources):
 
         # get files from sources
-        files = sources['files']
+        files = sources["files"]
 
         # add line break for file output lines
-        print("\n", end='\r')
+        print("\n", end="\r")
 
         # file loop
         for file in files:
             
             # set output message for file output header
-            if not quiet_flag:
-                output = ">>> tailing {0} lines from {1} <<<".format(self.lines, os.path.basename(file))
-            else:
-                output = ">>> tailing {0} lines <<<".format(self.lines)
+            output = f">>> tailing {self.lines} lines {f"from {os.path.basename(file)}" if quiet_flag else None}<<<"
 
             # print output
             print(output)
@@ -163,23 +160,23 @@ class GetTail(object):
             for index, line in enumerate(retrieved_lines):
 
                 # set output message
-                output = "{0:0{1}d}: {2}".format(
+                output = f"{0:0{1}d}: {2}".format(
                     (self.lines - index),   # index of lines requested
                     self.line_pad,          # add a left padding zeros
                     line.decode()           # decode line form b''
                 )
 
                 # print output
-                print(output, end='\r')
+                print(output, end="\r")
             
             # print line break at the end of file loop
-            print('\n', end='\r')
+            print("\n", end="\r")
 
     # function to tail follow files
     def follow(self, sources):
 
         # get files from sources
-        files = sources['files']
+        files = sources["files"]
 
         last_line = {}
         # set las line variable
@@ -197,7 +194,7 @@ class GetTail(object):
 
                     # do not update if the saved last line is identical to new retrieved line or if its None
                     if last_line[index] != updated_last_line and updated_last_line is not None:
-                        print(updated_last_line, end='\r')
+                        print(updated_last_line, end="\r")
                         last_line[index] = updated_last_line
 
                         # sleep time between line retrieves
@@ -239,17 +236,14 @@ class PathsValidity(object):
         valid_files = []
 
         # loop check through parsed path
-        self.logger.debug('Checking validity of inputed sources')
+        self.logger.debug("Checking validity of inputed sources")
         for file in files:
 
             # append path if it exists, is accessible and is a file
             if os.access(file, os.F_OK) and os.access(file, os.R_OK) and os.path.isfile(file):
 
-                if not quiet_flag:
-                    output = "Source path {0} was successfully parsed".format(file)
-                else:
-                    output = "A source path was successfully parsed"
-                
+                output = f"Source path {file if quiet_flag else None} was successfully parsed"
+                                    
                 # log output
                 self.logger.debug(output)
 
@@ -258,10 +252,7 @@ class PathsValidity(object):
 
             # if not, log the error
             else:
-                if not quiet_flag:
-                    output = "Source path {0} could not be accessed as a file".format(file)
-                else:
-                    output = "A source path could not be accessed as a file"
+                output = f"Source path {file if quiet_flag else None} could not be accessed as a file"
 
                 # log output
                 self.logger.debug(output)
@@ -283,52 +274,44 @@ class Logger(object):
         # 
         log = {
             # setup of log folder
-            'folder': folder,
+            "folder": folder,
             # set logging basic config variables
-            'level': 'INFO',
+            "level": "INFO",
             # 
-            'date_format': '%Y-%m-%d %H:%M:%S',
+            "date_format": "%Y-%m-%d %H:%M:%S",
             # 
-            'filepath': folder+'/'+__project__+'.log',
+            "filepath": f"{folder}/{__project__}.log",
             #
-            'format': format,
+            "format": format,
             # extra data into log formatter
-            'extra': extra
+            "extra": extra
         }
 
         # set log name
-        logger = logging.getLogger(__project__+'-'+__version__)
+        logger = logging.getLogger(f"{__project__}-{__version__}")
 
         # set formatter
-        formatter = logging.Formatter(log['format'])
+        formatter = logging.Formatter(log["format"])
 
         # check debug flag
         if debug_flag:
-            logger.setLevel('DEBUG')
+            logger.setLevel("DEBUG")
         else:
-            logger.setLevel('INFO')
+            logger.setLevel("INFO")
 
         # check if log folder exists
-        if not os.path.exists(log['folder']):
-            if not quiet_flag:
-                print("Log folder: {0} not found".format(log['folder']))
-            else:
-                print("Log folder not found")
+        if not os.path.exists(log["folder"]):
+            print(f"Log folder{f": {log['folder']}" if quiet_flag else None} not found")
             try:
-                os.makedirs(log['folder'])
-                if not quiet_flag:
-                    print("Log folder: {0} created".format(log['folder']))
-                else:
-                    print("Log folder created")
+                os.makedirs(log["folder"])
+                print(f"Log folder{f": {log['folder']}" if quiet_flag else None} created")
+  
             except Exception  as e:
-                if not quiet_flag:
-                    print("Log folder: {0} could not be created, error: {1}".format(log['folder'], e))
-                else:
-                    print("Log folder could not be created.")
+                print(f"Log folder{f": {log["folder"]}" if quiet_flag else None} could not be created, error: {e}")
                 sys.exit()
 
         # setup of file handler
-        file_handler = logging.FileHandler(log['filepath'])     
+        file_handler = logging.FileHandler(log["filepath"])     
         file_handler.setFormatter(formatter)
 
         # setup of stream handler
@@ -340,7 +323,7 @@ class Logger(object):
         logger.addHandler(stream_handler)
 
         # update logger to receive formatter within extra data
-        logger = logging.LoggerAdapter(logger, log['extra'])
+        logger = logging.LoggerAdapter(logger, log["extra"])
 
         self.adapter = logger
 
@@ -354,7 +337,7 @@ def __exit__(output):
         output
 
     # print output message
-    print(output, end='')
+    print(output, end="")
 
     # exit on error
     sys.exit()
@@ -376,64 +359,64 @@ def args(args):
 
     # files with limited lines
     parser.add_argument(
-        'sources',
-        nargs='+',
-        help='sources to be tailed', 
+        "sources",
+        nargs="+",
+        help="sources to be tailed", 
         default=[]
     )
 
     # path argument parser
     group.add_argument(
-        '-f','--follow',
-        action='store_true',
-        help='flag to not limit number of lines tailed', 
+        "-f","--follow",
+        action="store_true",
+        help="flag to not limit number of lines tailed", 
         default=False,
         required=False
     )
 
     # number of lines to limit tail
     group.add_argument(
-        '-n','--lines',
+        "-n","--lines",
         type=int,
-        help='number of lines to follow in total array of sources', 
+        help="number of lines to follow in total array of sources", 
         default=None,
         required=False
     )
 
     # quiet flag argument parser
     parser.add_argument(
-        '-q','--quiet', '--silent',
-        action='store_true', 
-        help='never output headers giving file names',
+        "-q","--quiet", "--silent",
+        action="store_true", 
+        help="never output headers giving file names",
         default=False,
         required=False
     )
 
     # sleep interval input
     parser.add_argument(
-        '-s','--sleep', '--sleep-interval',
+        "-s","--sleep", "--sleep-interval",
         type=int, 
-        help='with --follow, sleep for approximately N seconds (default 0) between iterations; least once every N seconds',
+        help="with --follow, sleep for approximately N seconds (default 0) between iterations; least once every N seconds",
         default=None,
         required=False
     )
 
     # debug flag argument parser
     parser.add_argument(
-        '-d','--debug',
-        action='store_true', 
-        help='process debug flag',
+        "-d","--debug",
+        action="store_true", 
+        help="process debug flag",
         default=False,
         required=False
     )
 
     # version output argument parser
     parser.add_argument(
-        '-v','--version',
-        action='version',
-        help='output software version',
+        "-v","--version",
+        action="version",
+        help="output software version",
         default=False,
-        version=(__project__+"-"+__version__)
+        version=(f"{__project__}-{__version__}")
     )
 
     # passing filtered arguments as array
@@ -484,10 +467,10 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
     sleep_time = sleep
 
     # standard log folder
-    log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../log/'))
+    log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"../log/"))
 
     # standard log format
-    log_format = '%(asctime)-8s %(levelname)-5s [%(project)s-%(version)s] user: %(user)s LOG: %(message)s'
+    log_format = "%(asctime)-8s %(levelname)-5s [%(project)s-%(version)s] user: %(user)s LOG: %(message)s"
 
     # creates a logger instance from class Logger within:
     # an adapter (the logging library Logger Adapter) and the verbose flag
@@ -497,41 +480,41 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
         format = log_format,
         debug_flag = debug_flag,
         extra = {
-            'project':  __project__,
-            'version':  __version__,
-            'user':     getpass.getuser()
+            "project":  __project__,
+            "version":  __version__,
+            "user":     getpass.getuser()
         },
         # verbose_flag = verbose_flag
     )
 
     # debug flag variable
-    logger.adapter.debug('DEBUG flags was setted as: {0}'.format(debug))
+    logger.adapter.debug(f"DEBUG flags was setted as: {debug}")
 
     # lines limit number
-    logger.adapter.debug('LINES limit number is: {0}'.format(lines))
+    logger.adapter.debug(f"LINES limit number is: {lines}")
 
     # sleep time value
     if lines == 0:
-        logger.adapter.debug('SLEEP time is: {0} seconds'.format(sleep_time))
+        logger.adapter.debug(f"SLEEP time is: {sleep_time} seconds")
 
     # check for quiet flag
     if not quiet_flag:
 
         # log folder location
-        logger.adapter.debug('Log file is being stored at directory: {0}'.format(log_folder))
+        logger.adapter.debug(f"Log file is being stored at directory: {log_folder}")
 
         # paths to be followed
         if len(sources) > 1:
 
             # create a fake array for output
-            fake_array = ''
+            fake_array = ""
             for source in sources:
-                fake_array = "{0}\n\t'{1}'".format(fake_array, source)
-            fake_array +='\n]'
+                fake_array = f"{fake_array}\n\t'{source}'"
+            fake_array +="\n]"
 
-            output = 'More than one SOURCE was inputed: \nSOURCES = [{0}'.format(fake_array)
+            output = f"More than one SOURCE was inputed: \nSOURCES = [{fake_array}"
         else:
-            output = 'Only one SOURCE was inputed: {0}'.format(sources)
+            output = f"Only one SOURCE was inputed: {sources}"
         
         # log output value
         logger.adapter.debug(output)
@@ -541,12 +524,12 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
 
     # check if validate paths remained
     if not len(valid_files) > 0:
-        logger.adapter.error('No paths were successfully parsed. Exiting...')
+        logger.adapter.error("No paths were successfully parsed. Exiting...")
         sys.exit()
 
     # combine valid files and vallid process
     valid_sources = {
-        'files': valid_files,
+        "files": valid_files,
     }
 
     if lines != 0:
