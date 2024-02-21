@@ -148,7 +148,8 @@ class GetTail(object):
         for file in files:
             
             # set output message for file output header
-            output = f">>> tailing {self.lines} lines {f'from {os.path.basename(file)}' if quiet_flag else None}<<<"
+            loud_output = f" from {os.path.basename(file)}" if not quiet_flag else ''
+            output = f">>> tailing {self.lines} lines{loud_output} <<<"
 
             # print output
             print(output)
@@ -160,11 +161,7 @@ class GetTail(object):
             for index, line in enumerate(retrieved_lines):
 
                 # set output message
-                output = f"{0:0{1}d}: {2}".format(
-                    (self.lines - index),   # index of lines requested
-                    self.line_pad,          # add a left padding zeros
-                    line.decode()           # decode line form b''
-                )
+                output = f"{(self.lines - index):0{self.line_pad}d}: {line.decode()}"
 
                 # print output
                 print(output, end="\r")
@@ -237,25 +234,27 @@ class PathsValidity(object):
 
         # loop check through parsed path
         self.logger.debug("Checking validity of inputed sources")
-        for file in files:
 
+        for file in files:            
+            file = file.replace('~', os.path.expanduser("~")) if "~" in file else file
+            
+            # file output if not quiet_flag
+            loud_file = f" {file}" if not quiet_flag else ''
+            
             # append path if it exists, is accessible and is a file
             if os.access(file, os.F_OK) and os.access(file, os.R_OK) and os.path.isfile(file):
-
-                output = f"Source path {file if quiet_flag else None} was successfully parsed"
-                                    
-                # log output
-                self.logger.debug(output)
+                
+                output = f"Source path{loud_file} was successfully parsed"
 
                 # append valid file to array
                 valid_files.append(file)
 
             # if not, log the error
             else:
-                output = f"Source path {file if quiet_flag else None} could not be accessed as a file"
+                output = f"Source path{loud_file} could not be accessed as a file"
 
-                # log output
-                self.logger.debug(output)
+            # log output
+            self.logger.debug(output)
         
         # return all parsed valid files
         return valid_files
@@ -301,7 +300,7 @@ class Logger(object):
 
         # check if log folder exists
         if not os.path.exists(log["folder"]):
-            folder_variable = f": {log['folder']}" if quiet_flag else None
+            folder_variable = f": {log['folder']}" if not quiet_flag else ''
             print(f"Log folder{folder_variable} not found")
             try:
                 os.makedirs(log["folder"])
