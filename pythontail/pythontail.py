@@ -148,7 +148,7 @@ class GetTail(object):
         for file in files:
             
             # set output message for file output header
-            output = f">>> tailing {self.lines} lines {f"from {os.path.basename(file)}" if quiet_flag else None}<<<"
+            output = f">>> tailing {self.lines} lines {f'from {os.path.basename(file)}' if quiet_flag else None}<<<"
 
             # print output
             print(output)
@@ -301,13 +301,14 @@ class Logger(object):
 
         # check if log folder exists
         if not os.path.exists(log["folder"]):
-            print(f"Log folder{f": {log['folder']}" if quiet_flag else None} not found")
+            folder_variable = f": {log['folder']}" if quiet_flag else None
+            print(f"Log folder{folder_variable} not found")
             try:
                 os.makedirs(log["folder"])
-                print(f"Log folder{f": {log['folder']}" if quiet_flag else None} created")
+                print(f"Log folder{folder_variable} created")
   
             except Exception  as e:
-                print(f"Log folder{f": {log["folder"]}" if quiet_flag else None} could not be created, error: {e}")
+                print(f"Log folder{folder_variable} could not be created, error: {e}")
                 sys.exit()
 
         # setup of file handler
