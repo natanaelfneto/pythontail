@@ -90,7 +90,7 @@ pip install pythontail
 _and use it as:_
 ```Python
 from pythontail import tail
-tail.run(['dir/log/file.log'])
+tail.run(["dir/log/file.log"])
 ```
 _use as terminal command:_
 ```Shell
@@ -151,8 +151,8 @@ import os
 
 
 # get as many valid files paths you want to be tailed
-log_file_1 = str(Path("{0}/log/fake_1.log".format(os.path.expanduser('~'))))
-log_file_2 = str(Path("{0}/log/fake_2.log".format(os.path.expanduser('~'))))
+log_file_1 = str(Path(f"{os.path.expanduser("~")}/log/fake_1.log"))
+log_file_2 = str(Path(f"{os.path.expanduser("~")}/log/fake_2.log"))
 
 # tail them
 tail.run(

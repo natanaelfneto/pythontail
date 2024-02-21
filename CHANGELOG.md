@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Released]
 
+### 0.8 - 2024-02-21
+### Changed
+- moved all the base code from Python 2 to Python 3 standards including f-string and print functions
+
 ### 0.7 - 2018-09-22
 ### Added
 - logging handler configurations class and global variable
