@@ -8,7 +8,7 @@
 </p>
 
 **PythonTail**: a Unix tail implementation in python.
-Version: **0.8**
+Version: **0.9**
 ***
 # Table of Contents
 * [Getting Started](#getting-started)
@@ -77,6 +77,9 @@ Version: **0.8**
 -   item:           `-d, --debug`\
     description:    create a log file and register all ocurrencies of regular\
                     behavior information, debug and errors as the timestamp and logged user\
+    status:         [**OK**]
+-   item:           `--logless`\
+    description:    send all output to stdout with no log folder or file being created\
     status:         [**OK**]
 -   item:           `?`\
     description:    tail files over tcp/ip\

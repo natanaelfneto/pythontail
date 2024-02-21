@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Released]
 
+### 0.9 - 2024-02-21
+### Added
+- added a --logless parameter to be called moving all logs to stdout and avoiding writing it into a log file
+
 ### 0.8 - 2024-02-21
 ### Changed
 - moved all the base code from Python 2 to Python 3 standards including f-string and print functions

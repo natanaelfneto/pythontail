@@ -4,7 +4,7 @@
 __project__ = "pythontail"
 
 # project version
-__version__ = "0.8"
+__version__ = "0.9"
 
 # prohect author
 __author__ = "natanaelfneto"
@@ -299,19 +299,22 @@ class Logger(object):
             logger.setLevel("INFO")
 
         # check if log folder exists
-        if not os.path.exists(log["folder"]):
-            folder_variable = f": {log['folder']}" if not quiet_flag else ''
-            print(f"Log folder{folder_variable} not found")
-            try:
-                os.makedirs(log["folder"])
-                print(f"Log folder{folder_variable} created")
-  
-            except Exception  as e:
-                print(f"Log folder{folder_variable} could not be created, error: {e}")
-                sys.exit()
+        if not logless_flag:
+            if not os.path.exists(log["folder"]):
+                folder_variable = f": {log['folder']}" if not quiet_flag else ''
+                print(f"Log folder{folder_variable} not found")
+                try:
+                    os.makedirs(log["folder"])
+                    print(f"Log folder{folder_variable} created")
+    
+                except Exception  as e:
+                    print(f"Log folder{folder_variable} could not be created, error: {e}")
+                    sys.exit()
 
         # setup of file handler
-        file_handler = logging.FileHandler(log["filepath"])     
+        file_handler = logging.FileHandler(log["filepath"]) if not logless_flag else logging.StreamHandler()
+            
+        
         file_handler.setFormatter(formatter)
 
         # setup of stream handler
@@ -418,6 +421,15 @@ def args(args):
         default=False,
         version=(f"{__project__}-{__version__}")
     )
+    
+    # version output argument parser
+    parser.add_argument(
+        "--logless",
+        action="store_true",
+        help="disable th creation of log folder, file and log registry",
+        default=False,
+        required=False
+    )
 
     # passing filtered arguments as array
     args = parser.parse_args(args)
@@ -449,10 +461,11 @@ def args(args):
         lines=args.lines,
         sleep=args.sleep,
         sources=args.sources,
+        logless=args.logless,
     )
 
 # function to check and tail files
-def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
+def run(debug=False, quiet=False, lines=10, sleep=0, sources=[], logless=False):
 
     # normalizing debug variable
     global debug_flag
@@ -465,9 +478,21 @@ def run(debug=False, quiet=False, lines=10, sleep=0, sources=[]):
     # normalizing sleep variable
     global sleep_time
     sleep_time = sleep
-
-    # standard log folder
-    log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"../log/"))
+    
+    # normalizing sleep variable
+    global logless_flag
+    logless_flag = logless
+    
+    # initial log folder is set to None
+    log_folder = None
+    
+    # if logless flag is set to true
+    if logless_flag:
+        output = ">>> No log folder or file will be create for this runtime accordingly to the --logless flag <<<\n"
+        print(output) if debug_flag else None
+    else:
+        # standard log folder
+        log_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"../log/"))
 
     # standard log format
     log_format = "%(asctime)-8s %(levelname)-5s [%(project)s-%(version)s] user: %(user)s LOG: %(message)s"
